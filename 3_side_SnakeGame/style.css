@@ -1,0 +1,121 @@
+body
+{
+	margin: 0;
+}
+header
+{
+	text-align: center;
+	font-size: large;
+	background-color: rgb(220,220,220);
+	color: rgb(40,40,40);
+	padding: 2px;
+	font-weight: bold;
+}
+footer
+{
+	text-align: center;
+	font-size: small;
+	background-color: rgb(220,220,220);
+	color: rgb(20,20,20);
+	padding: 3px;
+	font-weight: bold;
+}
+input[type="button"]
+{
+	background-color: brown;
+	border: blue solid 1px;
+	border-radius: 3px;
+	color: white;
+	height: 23px;
+	margin-top: 1px;
+}
+input[type="button"]:not([disabled]):hover
+{
+	box-shadow: 3px 3px 3px gray;
+}
+input[type="button"][disabled]
+{
+	color: lightgrey;
+	background-color: gray;
+	cursor: not-allowed;
+}
+.content
+{
+	padding: 12px;
+}
+.menubar
+{
+	margin: 5px 0px 3px 37px;
+}
+.menu
+{
+	display:inline; 
+	margin: 2px;
+	background-color: orange;
+	border-radius: 3px;
+	padding: 2px;
+}
+.menu:hover
+{
+	border: blue solid 1px;
+}
+/*li.active:hover
+{
+	border: red solid 2px;
+}*/
+a.active
+{
+	//pointer-events: none;
+	text-decoration: none;
+	background-color: yellow;
+	border-radius: 3px;
+	padding: 2px;
+	font-weight: bold;
+	border: red solid 2px;
+	margin: 2px;
+}
+.modal
+{
+	display: none;
+	position: fixed;
+	padding-top: 100px;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	background-color: rgba(0,0,0,0.5);
+}
+.modal-content
+{
+	padding: 20px;
+	//width: 60%;
+	//background-color: white;
+	//margin: auto;
+	border: lightgreen solid 1px;
+}
+.modal-window
+{
+	margin: auto; 
+	width: 60%; 
+	background-color: white;
+}
+.modal-header
+{
+	height: 20px;
+	background-color: #00cc00;
+	padding: 1px;
+}
+.close
+{
+	color: rgb(30,30,30); //darkblue;
+	float: right;
+	cursor: pointer;
+	width: 25px;
+	text-align: center;
+}
+.close:hover
+{
+	color: white;
+	background-color: red;
+}
