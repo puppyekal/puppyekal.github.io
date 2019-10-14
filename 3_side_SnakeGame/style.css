@@ -43,10 +43,6 @@ input[type="button"][disabled]
 {
 	padding: 12px;
 }
-.menubar
-{
-	margin: 5px 0px 3px 37px;
-}
 .menu
 {
 	display:inline; 

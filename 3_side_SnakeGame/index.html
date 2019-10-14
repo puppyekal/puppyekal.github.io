@@ -1,765 +1,930 @@
 <html>
 <head>
-<title>Old Fashion Games - Free online games</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<meta name="keywords" content="HTML,JavaScript,games,snake,browser,online,free,HTML5">
-<link rel="stylesheet" type="text/css" href="style.css">
+	<title>5Side Snake Game</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<meta name="keywords" content="HTML,JavaScript,games,snake,browser,online,free,HTML5">
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<script src="modal.js"></script>
-<script>
-var c, ctx;
-var score=0;
-var GO_LEFT=1, GO_RIGHT=2, GO_UP=3, GO_DOWN=4;
-var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3;
-var len=310, rowcount=9;
-var tableX=40, tableY;
-var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
-var points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
-		{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
+	<!-- <script src="modal.js"></script> -->
+	<!-- 왜있는거지?-->
+	<script>
+		var c, ctx;
+		var score=0;
+		var GO_LEFT=1, GO_RIGHT=2, GO_UP=3, GO_DOWN=4;
+		var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
+		var len=310, rowcount=9;
+		var tableX=40, tableY;
+		var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
+		var points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
+					  {row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+					  {row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+					  {row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
 
-$(document).ready(function()
-{
-	c = $("#myCanvas")[0];
-	//alert(c);
-	ctx = c.getContext("2d");
-
-	//alert("loaded");
-	drawTable();
-	drawSnake();
-});
-
-var pickpoint=null;
-var gameStarted=false;
-var gamePaused=false;
-var skipnext=false;
-var ismodal = false;
-
-window.addEventListener("keydown", function(e)
-{
-	if (ismodal == true)
-	{
-		if (e.keyCode == 27)
+		$(document).ready(function()
 		{
-			CloseModal();
-		}
-		//alert(e.keyCode);
-		return;
-	}
-	else if (gameStarted == false)
-	{
-		return;
-	}
-	else if ((gamePaused == true) && (e.keyCode != 80))
-	{
-		return;
-	}
-	else if (e.keyCode == 80)
-	{
-		pauseclick();
-	}
+			c = $("#myCanvas")[0];
+			//alert(c);
+			ctx = c.getContext("2d");
 
-	var dir=direction[direction.length-1];
-	if ((e.keyCode == 38) && (dir != GO_DOWN) && (dir != GO_UP))
-	{
-		direction.push(GO_UP);
-		callbackfn();
-		skipnext=true;
-	}
-	else if ((e.keyCode == 40) && (dir != GO_UP) && (dir != GO_DOWN)) 
-	{
-		direction.push(GO_DOWN);
-		callbackfn();
-		skipnext=true;
-	}
-	else if ((e.keyCode == 37) && (dir != GO_RIGHT) && (dir != GO_LEFT)) 
-	{
-		direction.push(GO_LEFT);
-		callbackfn();
-		skipnext=true;
-	}
-	else if ((e.keyCode == 39) && (dir != GO_LEFT) && (dir != GO_RIGHT))
-	{
-		direction.push(GO_RIGHT);
-		callbackfn();
-		skipnext=true;
-	}
-});
+			//alert("loaded");
+			drawTable();//먼저 그림
+			drawSnake();
+		});
 
-var bottomPoints1=[];
-var bottomPoints2=[];
-var topPoints1=[];
-var topPoints2=[];
-var frontPoints1=[];
-var frontPoints2=[];
-var matrixTop=[];
-var matrixBottom=[];
+		var pickpoint=null;
+		var gameStarted=false;
+		var gamePaused=false;
+		var skipnext=false;
+		var ismodal = false;
 
-function clearArrays()
-{
-	bottomPoints1=[];
-	bottomPoints2=[];
-	topPoints1=[];
-	topPoints2=[];
-	frontPoints1=[];
-	frontPoints2=[];
-	matrixTop=[];
-	matrixBottom=[];
-}
-
-var backgroundcolor = "rgb(230,230,230)";
-
-function drawTable()
-{
-	// first clear the whole canvas
-	ctx.clearRect(0,0,c.width,c.height);
-
-	var x = tableX; //(c.width-len)/2;
-	var y = (c.height-len)/2;
-	tableY=y;
-	//alert("x="+x+" y="+y);
-	ctx.fillStyle=backgroundcolor;
-	ctx.lineWidth=2;
-	ctx.strokeStyle="darkblue";
-	//ctx.fillRect(x,y,3,3);
-
-	//ctx.moveTo(x,y);
-	//ctx.lineTo(x+len,y);
-	//ctx.stroke();
-	ctx.strokeRect(x,y,len,len);
-	ctx.fillRect(x,y,len,len);
-	ctx.strokeRect(x+len/4,y+len/4,len/2,len/2);
-	ctx.moveTo(x,y);
-	ctx.lineTo(x+len/4,y+len/4);
-	ctx.moveTo(x+len,y);
-	ctx.lineTo(x+3*len/4,y+len/4);
-	ctx.moveTo(x,y+len);
-	ctx.lineTo(x+len/4,y+3*len/4);
-	ctx.moveTo(x+len,y+len);
-	ctx.lineTo(x+3*len/4,y+3*len/4);
-	//ctx.stroke();
-
-	bottomPoints1.push({x1:x+len/4,y1:y+3*len/4,x2:x,y2:y+len});
-	bottomPoints2.push({x1:x+len/4,y1:y+3*len/4,x2:x+3*len/4,y2:y+3*len/4});
-
-	topPoints1.push({x1:x,y1:y,x2:x+len/4,y2:y+len/4});
-	topPoints2.push({x1:x,y1:y,x2:x+len,y2:y});
-
-	frontPoints1.push({x1:x+len/4,y1:y+len/4,x2:x+3*len/4,y2:y+len/4});
-	frontPoints2.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
-
-	for (i=1;i<rowcount;i++)
-	{
-		//top side
-		x1=x+i*len/rowcount;
-		y1=y;
-		ctx.moveTo(x1,y1);
-		x2=x+len/4+i*len/(2*rowcount);
-		y2=y+len/4
-		ctx.lineTo(x2,y2);
-		topPoints1.push({x1:x1,y1:y1,x2:x2,y2:y2});
-
-		x3=x+i*len/(4*rowcount);
-		y3=y+i*len/(4*rowcount);
-		ctx.moveTo(x3,y3);
-		x4=x+len-i*len/(4*rowcount);
-		y4=y+i*len/(4*rowcount);
-		ctx.lineTo(x4,y4);
-		topPoints2.push({x1:x3,y1:y3,x2:x4,y2:y4});
-
-		//front side
-		x5=x+len/4;
-		y5=y+len/4+i*len/(2*rowcount);
-		ctx.moveTo(x5,y5);
-		x6=x+3*len/4;
-		y6=y5;
-		ctx.lineTo(x6,y6);
-		frontPoints1.push({x1:x5,y1:y5,x2:x6,y2:y6});
-
-		x7=x+len/4+i*len/(2*rowcount);
-		y7=y+len/4;
-		ctx.moveTo(x7,y7);
-		x8=x7;
-		y8=y+3*len/4;
-		ctx.lineTo(x8,y8);
-		frontPoints2.push({x1:x7,y1:y7,x2:x8,y2:y8});
-
-		//bottom side
-		x9=x+len/4+i*len/(2*rowcount);
-		y9=y+3*len/4;
-		ctx.moveTo(x9,y9);
-		x10=x+i*len/rowcount;
-		y10=y+len;
-		ctx.lineTo(x10,y10);
-		bottomPoints1.push({x1:x9,y1:y9,x2:x10,y2:y10});
-
-		/*x11=x+i*len/(4*rowcount);
-		y11=y+len-i*len/(4*rowcount);
-		ctx.moveTo(x11,y11);
-		x12=x+len-i*len/(4*rowcount);
-		y12=y11;
-		ctx.lineTo(x12,y12);*/
-
-		x11=x+len/4-i*len/(4*rowcount);
-		y11=y+3*len/4+i*len/(4*rowcount);
-		ctx.moveTo(x11,y11);
-		x12=x+3*len/4+i*len/(4*rowcount);
-		y12=y11;
-		ctx.lineTo(x12,y12);
-		bottomPoints2.push({x1:x11,y1:y11,x2:x12,y2:y12});
-	}
-
-	topPoints1.push({x1:x+len,y1:y,x2:x+3*len/4,y2:y+len/4});
-	topPoints2.push({x1:x+len/4,y1:y+len/4,x2:x+3*len/4,y2:y+len/4});
-
-	bottomPoints1.push({x1:x+3*len/4,y1:y+3*len/4,x2:x+len,y2:y+len});
-	bottomPoints2.push({x1:x,y1:y+len,x2:x+len,y2:y+len});
-
-	frontPoints1.push({x1:x+len/4,y1:y+3*len/4,x2:x+3*len/4,y2:y+3*len/4});
-	frontPoints2.push({x1:x+3*len/4,y1:y+len/4,x2:x+3*len/4,y2:y+3*len/4});
-
-	ctx.stroke();
-	//alert(bottomPoints1.length);
-	radius=3;
-	/*for (i=0;i<bottomPoints1.length;i++)
-	{
-	//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
-	//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
-		highlightPoint(bottomPoints1[i].x1, bottomPoints1[i].y1);
-		highlightPoint(bottomPoints1[i].x2, bottomPoints1[i].y2);
-	}*/
-	/*for (i=0;i<bottomPoints2.length;i++)
-	{
-	//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
-	//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
-		ctx.beginPath();
-		ctx.arc(bottomPoints2[i].x1, bottomPoints2[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(bottomPoints2[i].x2, bottomPoints2[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	/*for (i=0;i<topPoints1.length;i++)
-	{
-		ctx.beginPath();
-		ctx.arc(topPoints1[i].x1, topPoints1[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(topPoints1[i].x2, topPoints1[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	/*for (i=0;i<topPoints2.length;i++)
-	{
-		ctx.beginPath();
-		ctx.arc(topPoints2[i].x1, topPoints2[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(topPoints2[i].x2, topPoints2[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	//for (i=8;i</*frontPoints1.length*/ 9;i++)
-	/*{
-		//ctx.beginPath();
-		//ctx.arc(frontPoints1[i].x1, frontPoints1[i].y1, radius, 0, 2*Math.PI);
-		//ctx.arc(frontPoints1[i].x2, frontPoints1[i].y2, radius, 0, 2*Math.PI);
-		//ctx.stroke();
-		highlightPoint(frontPoints1[i].x1, frontPoints1[i].y1);
-		highlightPoint(frontPoints1[i].x2, frontPoints1[i].y2);
-	}*/
-	/*for (i=0;i<frontPoints2.length;i++)
-	{
-		//ctx.beginPath();
-		//ctx.arc(frontPoints2[i].x1, frontPoints2[i].y1, radius, 0, 2*Math.PI);
-		//ctx.arc(frontPoints2[i].x2, frontPoints2[i].y2, radius, 0, 2*Math.PI);
-		//ctx.stroke();
-		highlightPoint(frontPoints2[i].x1, frontPoints2[i].y1);
-		highlightPoint(frontPoints2[i].x2, frontPoints2[i].y2);
-	}*/
-	//ctx.font="20px Calibri";
-	//ctx.strokeText("3Sides Snake", x+len+20, y+5);
-
-	for (i=0; i < topPoints2.length; i++)
-	{
-		var line=[];
-		for (j=0; j < topPoints1.length; j++)
+		window.addEventListener("keydown", function(e)
 		{
-			var pt = intersection(topPoints1[j].x1, topPoints1[j].y1,
-				topPoints1[j].x2, topPoints1[j].y2,
-				topPoints2[i].x1, topPoints2[i].y1,
-				topPoints2[i].x2, topPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
-			line.push(pt);
-		}
-		matrixTop.push(line);
-	}
-	//alert(matrixTop[0].length);
-	/*for (i=0; i<matrixTop.length; i++)
-	{
-		for (j=0; j<matrixTop[i].length; j++)
-		{
-			if (i==8) highlightPoint2(matrixTop[i][j]);
-			//if (i==4) {alert(matrixTop[i][j].xint); }
-		}
-	}*/
-
-	for (i=0; i < bottomPoints2.length; i++)
-	{
-		var line=[];
-		for (j=0; j < bottomPoints1.length; j++)
-		{
-			var pt = intersection(bottomPoints1[j].x1, bottomPoints1[j].y1,
-				bottomPoints1[j].x2, bottomPoints1[j].y2,
-				bottomPoints2[i].x1, bottomPoints2[i].y1,
-				bottomPoints2[i].x2, bottomPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
-			line.push(pt);
-		}
-		matrixBottom.push(line);
-	}
-	/*for (i=0; i<matrixBottom.length; i++)
-	{
-		for (j=0; j<matrixBottom[i].length; j++)
-		{
-			if (i==8) 
-				highlightPoint2(matrixBottom[i][j]);
-			//if (i==4) {alert(matrixTop[i][j].xint); }
-		}
-	}*/
-
-	eraseScore();
-	drawScore();
-}
-
-function drawPart(part, erase)
-{
-	//alert(part);
-	if (part.side==SIDE_BOTTOM) // bottom
-	{
-		x1=matrixBottom[part.row][part.col].xint;
-		y1=matrixBottom[part.row][part.col].yint;
-		x2=matrixBottom[part.row][part.col+1].xint;
-		y2=matrixBottom[part.row][part.col+1].yint;
-		x3=matrixBottom[part.row+1][part.col+1].xint;
-		y3=matrixBottom[part.row+1][part.col+1].yint;
-		x4=matrixBottom[part.row+1][part.col].xint;
-		y4=matrixBottom[part.row+1][part.col].yint;
-	}
-	else if (part.side==SIDE_TOP) // top
-	{
-		x1=matrixTop[part.row][part.col].xint;
-		y1=matrixTop[part.row][part.col].yint;
-		x2=matrixTop[part.row][part.col+1].xint;
-		y2=matrixTop[part.row][part.col+1].yint;
-		x3=matrixTop[part.row+1][part.col+1].xint;
-		y3=matrixTop[part.row+1][part.col+1].yint;
-		x4=matrixTop[part.row+1][part.col].xint;
-		y4=matrixTop[part.row+1][part.col].yint;
-	}
-	else if (part.side==SIDE_FRONT) // front
-	{
-		x1=frontPoints2[part.col].x1;
-		y1=frontPoints1[part.row].y1;
-		x2=frontPoints2[part.col+1].x1;
-		y2=y1;
-		x3=x2;
-		y3=frontPoints1[part.row+1].y1;
-		x4=x1;
-		y4=y3;
-	}
-	//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
-	
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.lineTo(x3, y3);
-	ctx.lineTo(x4, y4);
-	ctx.lineTo(x1, y1);
-	if (erase==1) // fill with background color
-	{
-		ctx.fillStyle=backgroundcolor;
-		ctx.strokeStyle="darkblue";
-	}
-	else if (erase==2) // pick part
-	{
-		ctx.fillStyle="red";
-		ctx.strokeStyle="rgb(240,240,240)";
-	}
-	else
-	{
-		ctx.fillStyle="rgb(0,255,0)";
-		ctx.strokeStyle="rgb(240,240,240)";
-	}
-	ctx.fill();
-	//if (erase==1)
-	{
-		ctx.stroke();
-	}
-
-	ctx.strokeStyle="darkblue";
-}
-
-function highlightPoint2(pt)
-{
-	highlightPoint(pt.xint, pt.yint);
-}
-
-function highlightPoint(px,py)
-{
-	var radius=3;
-	ctx.beginPath();
-	ctx.arc(px, py, radius, 0, 2*Math.PI);
-	ctx.stroke();
-}
-
-function drawSnake()
-{
-	//alert(points.length);
-	//alert(points[1].x+", "+points[1].y);
-	for (i = 0; i < points.length; i++)
-	{
-		drawPart(points[i], 0);
-	}
-	//ctx.stroke();
-}
-
-function drawScore()
-{
-	ctx.font="15px Courier";
-	ctx.strokeText("Score: "+score, tableX+len+20, tableY+53);
-}
-
-function eraseScore()
-{
-	//ctx.rect(tableX+len+20, tableY+35, 120, 30); ctx.stroke();
-	ctx.clearRect(tableX+len+18, tableY+35, 110, 30);
-}
-
-var timerId, speed;
-function StartGame()
-{
-	//var speed;
-	var dif = $("#difficulty")[0];
-	//alert(dif.value);
-	if (dif.value=="easy")
-	{
-		speed=500;
-	}
-	else if (dif.value=="moderate")
-	{
-		speed=250;
-	}
-	else if (dif.value=="hard")
-	{
-		speed=100;
-	}
-	dif.disabled=true;
-	var options = $("#optionsbtn")[0];
-	options.disabled=true;
-	$("#pausebtn")[0].disabled=false;
-	$("#startbtn")[0].value="Stop";
-
-	timerId = setInterval(callbackfn, speed);
-	gameStarted=true;
-}
-
-function callbackfn()
-{
-	if (skipnext == true)
-	{
-		skipnext=false;
-		return;
-	}
-
-	//ctx.clearRect(0,0,c.width,c.height);
-	var newhead;
-	if (direction.length > 1)
-	{
-		direction.shift();
-	}
-	var dir=direction[0];
-	
-	if (dir == GO_LEFT) // left
-	{
-		var head=points[0];
-		var newcol=head.col-1;
-		if (head.col==0)
-		{
-			//newhead={row:head.row, col:head.col-1, side:head.side};
-			newcol=rowcount-1;
-		}
-		
-		newhead={row:head.row, col:newcol, side:head.side};
-	}
-	else if (dir == GO_UP) // up
-	{
-		var head=points[0];
-		var newrow=head.row-1;
-		var newside=head.side;
-
-		if (head.row==0)
-		{
-			newrow=rowcount-1;
-			if (head.side==SIDE_BOTTOM)
+			if (ismodal == true)
 			{
-				newside=SIDE_FRONT;
+				if (e.keyCode == 27)
+				{
+					CloseModal();
+				}
+				//alert(e.keyCode);
+				return;
 			}
-			else if (head.side==SIDE_FRONT)
+			else if (gameStarted == false)
 			{
-				newside=SIDE_TOP;
+				return;
 			}
-			else if (head.side==SIDE_TOP)
+			else if ((gamePaused == true) && (e.keyCode != 80))
 			{
-				newside=SIDE_BOTTOM;
+				return;
 			}
-			//newrow=rowcount-1;
-		}
-		newhead={row:newrow, col:head.col, side:newside};
-	}
-	else if (dir == GO_RIGHT) // right
-	{
-		var head=points[0];
-		var newcol=head.col+1;
-		if (head.col==(rowcount-1))
-		{
-			newcol=0;
-		}
-		
-		newhead={row:head.row, col:newcol, side:head.side};
-	}
-	else if (dir == GO_DOWN)
-	{
-		var head=points[0];
-		var newrow=head.row+1;
-		var newside=head.side;
-
-		if (head.row==rowcount-1)
-		{
-			newrow=0;
-			if (head.side==SIDE_BOTTOM)
+			else if (e.keyCode == 80)
 			{
-				newside=SIDE_TOP;
+				pauseclick();
 			}
-			else if (head.side==SIDE_FRONT)
+
+			var dir=direction[direction.length-1];
+			if ((e.keyCode == 38) && (dir != GO_DOWN) && (dir != GO_UP))
 			{
-				newside=SIDE_BOTTOM;
+				direction.push(GO_UP);
+				callbackfn();
+				skipnext=true;
 			}
-			else if (head.side==SIDE_TOP)
+			else if ((e.keyCode == 40) && (dir != GO_UP) && (dir != GO_DOWN)) 
 			{
-				newside=SIDE_FRONT;
+				direction.push(GO_DOWN);
+				callbackfn();
+				skipnext=true;
 			}
-		}
-		newhead={row:newrow, col:head.col, side:newside};
-	}
+			else if ((e.keyCode == 37) && (dir != GO_RIGHT) && (dir != GO_LEFT)) 
+			{
+				direction.push(GO_LEFT);
+				callbackfn();
+				skipnext=true;
+			}
+			else if ((e.keyCode == 39) && (dir != GO_LEFT) && (dir != GO_RIGHT))
+			{
+				direction.push(GO_RIGHT);
+				callbackfn();
+				skipnext=true;
+			}
+		});
 
-	
-	if ((pickpoint == null) || (newhead.row!=pickpoint.row) || 
-		(newhead.col!=pickpoint.col) || (newhead.side!=pickpoint.side))
-	{
-		// erase tail
-		var tail=points.pop();
-		drawPart(tail, 1);
-	}
-	else
-	{
-		//snake found the brown part
-		pickpoint=null;
-		score++;
-		eraseScore();
-		drawScore();
-	}
-	points.splice(0,0,newhead);
-	drawPart(newhead, 0);
+		var bottomPoints1=[];
+		var bottomPoints2=[];
 
-	if (pickpoint == null)
-	{
-		pickpoint=randomGenerate();
-		//var x = insideSnake(); alert(x);
-		while (insideSnake() == true)
+		var topPoints1=[];
+		var topPoints2=[];
+
+		var frontPoints1=[];
+		var frontPoints2=[];
+
+		var leftPoints1=[];
+		var leftPoints2=[];
+
+		var rightPoints1=[];
+		var rightPoints2=[];
+
+		// var rightPoints1=[];
+		// var rightPoints2=[];//전방에 5초간----
+
+		var matrixTop=[];
+		var matrixBottom=[];
+		var matrixLeft=[];
+		var matrixRight=[];
+
+		function clearArrays()
 		{
-			pickpoint=randomGenerate();
-		}
-		//alert("randrow="+pickpoint.row+", randcol="+pickpoint.col+
-		//	", randside="+pickpoint.side);
-		drawPart(pickpoint, 2);
-	}
+			bottomPoints1=[];
+			bottomPoints2=[];
+			topPoints1=[];
+			topPoints2=[];
+			frontPoints1=[];
+			frontPoints2=[];
 
-	//check for failure
-	for (i=1; i<points.length; i++)
-	{
-		var crtPoint = points[i];
-		if ((crtPoint.row==newhead.row) && (crtPoint.col==newhead.col) && 
-			(crtPoint.side==newhead.side))
+			leftPoints1=[];
+			leftPoints2=[];
+
+			rightPoints1=[];
+			rightPoints2=[];
+
+			matrixTop=[];
+			matrixBottom=[];
+			matrixLeft=[];
+			matrixRight=[];
+		}
+
+		var backgroundcolor = "rgb(230,230,230)";
+
+		function drawTable()
 		{
-			// fail
-			//alert("Game over. Congratulations! Your score is: "+score);
-			ShowModal("Game over. Congratulations! Your score is: "+score);
-			StopGame();
+			// first clear the whole canvas
+			ctx.clearRect(0,0,c.width,c.height);
+
+			var x = tableX; //(c.width-len)/2;
+			var y = (c.height-len)/2;
+			console.log(x,y);
+			console.log(len);
+			tableY=y;
+			//alert("x="+x+" y="+y);
+			ctx.fillStyle=backgroundcolor;
+			ctx.lineWidth=1;
+			ctx.strokeStyle="black";
+			//ctx.fillRect(x,y,3,3);
+
+			//ctx.moveTo(x,y);
+			//ctx.lineTo(x+len,y);
+			//ctx.stroke();
+			ctx.strokeRect(x,y,len,len);
+			ctx.fillRect(x,y,len,len);
+
+			ctx.strokeRect(x+len/4,y+len/4,len/2,len/2);
+			//가운데 정사각형 격자
+			ctx.moveTo(x,y);
+			ctx.lineTo(x+len/4,y+len/4);
+			//좌측상단에서 가운데 좌상으로
+
+			ctx.moveTo(x+len,y);
+			ctx.lineTo(x+3*len/4,y+len/4);
+			//우상에서 중앙 우상으로
+
+			ctx.moveTo(x,y+len);
+			ctx.lineTo(x+len/4,y+3*len/4);
+			//좌하시작
+
+			ctx.moveTo(x+len,y+len);
+			ctx.lineTo(x+3*len/4,y+3*len/4);
+			//우하
+
+
+			//ctx.stroke();
+
+			bottomPoints1.push({x1:x+len/4, y1:y+3*len/4,
+								x2:x,		y2:y+len});
+			//좌하 중앙,좌하
+
+			bottomPoints2.push({x1:x+len/4,  y1:y+3*len/4,
+								x2:x+3*len/4,y2:y+3*len/4});
+			//좌하 중앙, 우하 중앙
+
+			//바닥 좌표인듯
+
+			topPoints1.push({x1:x,		y1:y,
+							 x2:x+len/4,y2:y+len/4});
+			//좌상, 좌상 중앙
+
+			topPoints2.push({x1:x,	  y1:y,
+							 x2:x+len,y2:y});
+			//좌상, 우상
+
+			//아마 천장 좌표겠지??
+
+			frontPoints1.push({x1:x+len/4,  y1:y+len/4,
+							   x2:x+3*len/4,y2:y+len/4});
+			//좌상 중앙, 우상 중앙
+
+			frontPoints2.push({x1:x+len/4,y1:y+len/4,
+							   x2:x+len/4,y2:y+3*len/4});
+			//좌상 중앙, 좌하 중앙
+			//뒷면ㅇㅇ
+
+			//와 계산하자!!
+			leftPoints1.push({x1:x,  y1:y,
+							   x2:x+len/4,y2:y+len/4});
+			leftPoints2.push({x1:x,y1:y,
+							   x2:x,y2:y+len});
+
+			rightPoints1.push({x1:x+len,  y1:y,
+							   x2:x+3*len/4,y2:y+len/4});
+			rightPoints2.push({x1:x+3*len/4,y1:y+len/4,
+							   x2:x+3*len/4,y2:y+3*len/4});
+
+
+
+			for (i=1;i<rowcount;i++)
+			{
+				//top side
+				x1=x+i*len/rowcount;
+				y1=y;
+				ctx.moveTo(x1,y1);
+				x2=x+len/4+i*len/(2*rowcount);
+				y2=y+len/4
+				ctx.lineTo(x2,y2);
+				topPoints1.push({x1:x1,y1:y1,x2:x2,y2:y2});
+
+				x3=x+i*len/(4*rowcount);
+				y3=y+i*len/(4*rowcount);
+				ctx.moveTo(x3,y3);
+				x4=x+len-i*len/(4*rowcount);
+				y4=y+i*len/(4*rowcount);
+				ctx.lineTo(x4,y4);
+				topPoints2.push({x1:x3,y1:y3,x2:x4,y2:y4});
+
+				//front side
+				x5=x+len/4;
+				y5=y+len/4+i*len/(2*rowcount);
+				ctx.moveTo(x5,y5);
+				x6=x+3*len/4;
+				y6=y5;
+				ctx.lineTo(x6,y6);
+				frontPoints1.push({x1:x5,y1:y5,x2:x6,y2:y6});
+
+				x7=x+len/4+i*len/(2*rowcount);
+				y7=y+len/4;
+				ctx.moveTo(x7,y7);
+				x8=x7;
+				y8=y+3*len/4;
+				ctx.lineTo(x8,y8);
+				frontPoints2.push({x1:x7,y1:y7,x2:x8,y2:y8});
+
+				//bottom side
+				x9=x+len/4+i*len/(2*rowcount);
+				y9=y+3*len/4;
+				ctx.moveTo(x9,y9);
+				x10=x+i*len/rowcount;
+				y10=y+len;
+				ctx.lineTo(x10,y10);
+				bottomPoints1.push({x1:x9,y1:y9,x2:x10,y2:y10});
+
+				/*x11=x+i*len/(4*rowcount);
+				y11=y+len-i*len/(4*rowcount);
+				ctx.moveTo(x11,y11);
+				x12=x+len-i*len/(4*rowcount);
+				y12=y11;
+				ctx.lineTo(x12,y12);*/
+
+				x11=x+len/4-i*len/(4*rowcount);
+				y11=y+3*len/4+i*len/(4*rowcount);
+				ctx.moveTo(x11,y11);
+				x12=x+3*len/4+i*len/(4*rowcount);
+				y12=y11;
+				ctx.lineTo(x12,y12);
+				bottomPoints2.push({x1:x11,y1:y11,x2:x12,y2:y12});
+
+
+				//left
+				x13=x;
+				y13=y+i*len/rowcount;
+				ctx.moveTo(x13,y13);
+				x14=x+len/4;
+				y14=y+len/4+i*len/(2*rowcount);
+				ctx.lineTo(x14,y14);
+				topPoints1.push({x1:x13,y1:y13,x2:x14,y2:y14});
+
+				x15=x+i*len/(4*rowcount);
+				y15=y+len-i*len/(4*rowcount);
+				ctx.moveTo(x15,y15);
+				x16=x15;
+				y16=y+i*len/(4*rowcount);
+				ctx.lineTo(x16,y16);
+				topPoints2.push({x1:x15,y1:y15,x2:x16,y2:y16});
+
+				//right
+				x17=x+3*len/4;
+				y17=y+len/4+i*len/(2*rowcount);
+				ctx.moveTo(x17,y17);
+				x18=x+len;
+				y18=y+i*len/rowcount;
+				ctx.lineTo(x18,y18);
+				topPoints1.push({x1:x17,y1:y17,x2:x18,y2:y18});
+
+				x19=x+len-i*len/(4*rowcount)
+				y19=y+i*len/(4*rowcount);
+				ctx.moveTo(x19,y19);
+				x20=x19;
+				y20=y+len-i*len/(4*rowcount);
+				ctx.lineTo(x20,y20);
+				topPoints2.push({x1:x19,y1:y19,x2:x20,y2:y20});
+			}
+
+			topPoints1.push({x1:x+len,y1:y,x2:x+3*len/4,y2:y+len/4});//
+			topPoints2.push({x1:x+len/4,y1:y+len/4,x2:x+3*len/4,y2:y+len/4});
+
+			bottomPoints1.push({x1:x+3*len/4,y1:y+3*len/4,x2:x+len,y2:y+len});
+			bottomPoints2.push({x1:x,y1:y+len,x2:x+len,y2:y+len});
+
+			frontPoints1.push({x1:x+len/4,y1:y+3*len/4,x2:x+3*len/4,y2:y+3*len/4});
+			frontPoints2.push({x1:x+3*len/4,y1:y+len/4,x2:x+3*len/4,y2:y+3*len/4});
+
+			leftPoints1.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
+			leftPoints2.push({x1:x+len/4,y1:y+3*len/4,x2:x,y2:y+len});
+
+			rightPoints1.push({x1:x+len,y1:y,x2:x+len,y2:y+len});
+			rightPoints2.push({x1:x+3*len/4,y1:y+3*len/4,x2:x+len,y2:y+len});
+
+			ctx.stroke();
+			//alert(bottomPoints1.length);
+			radius=3;
+			/*for (i=0;i<bottomPoints1.length;i++)
+			{
+			//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
+			//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
+				highlightPoint(bottomPoints1[i].x1, bottomPoints1[i].y1);
+				highlightPoint(bottomPoints1[i].x2, bottomPoints1[i].y2);
+			}*/
+			/*for (i=0;i<bottomPoints2.length;i++)
+			{
+			//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
+			//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
+				ctx.beginPath();
+				ctx.arc(bottomPoints2[i].x1, bottomPoints2[i].y1, radius, 0, 2*Math.PI);
+				ctx.arc(bottomPoints2[i].x2, bottomPoints2[i].y2, radius, 0, 2*Math.PI);
+				ctx.stroke();
+			}*/
+			/*for (i=0;i<topPoints1.length;i++)
+			{
+				ctx.beginPath();
+				ctx.arc(topPoints1[i].x1, topPoints1[i].y1, radius, 0, 2*Math.PI);
+				ctx.arc(topPoints1[i].x2, topPoints1[i].y2, radius, 0, 2*Math.PI);
+				ctx.stroke();
+			}*/
+			/*for (i=0;i<topPoints2.length;i++)
+			{
+				ctx.beginPath();
+				ctx.arc(topPoints2[i].x1, topPoints2[i].y1, radius, 0, 2*Math.PI);
+				ctx.arc(topPoints2[i].x2, topPoints2[i].y2, radius, 0, 2*Math.PI);
+				ctx.stroke();
+			}*/
+			//for (i=8;i</*frontPoints1.length*/ 9;i++)
+			/*{
+				//ctx.beginPath();
+				//ctx.arc(frontPoints1[i].x1, frontPoints1[i].y1, radius, 0, 2*Math.PI);
+				//ctx.arc(frontPoints1[i].x2, frontPoints1[i].y2, radius, 0, 2*Math.PI);
+				//ctx.stroke();
+				highlightPoint(frontPoints1[i].x1, frontPoints1[i].y1);
+				highlightPoint(frontPoints1[i].x2, frontPoints1[i].y2);
+			}*/
+			/*for (i=0;i<frontPoints2.length;i++)
+			{
+				//ctx.beginPath();
+				//ctx.arc(frontPoints2[i].x1, frontPoints2[i].y1, radius, 0, 2*Math.PI);
+				//ctx.arc(frontPoints2[i].x2, frontPoints2[i].y2, radius, 0, 2*Math.PI);
+				//ctx.stroke();
+				highlightPoint(frontPoints2[i].x1, frontPoints2[i].y1);
+				highlightPoint(frontPoints2[i].x2, frontPoints2[i].y2);
+			}*/
+			//ctx.font="20px Calibri";
+			//ctx.strokeText("3Sides Snake", x+len+20, y+5);
+
+
+
+
+			//이거부터 뭔지 모르겠네 ㅁㄴㅇㄹ 아마도 빨간거 만드는 함수인가? 아니네 뱀 좌표표시하는 함수였네
+			for (i=0; i < topPoints2.length; i++)
+			{
+				var line=[];
+				for (j=0; j < topPoints1.length; j++)
+				{
+					var pt = intersection(topPoints1[j].x1, topPoints1[j].y1,
+						topPoints1[j].x2, topPoints1[j].y2,
+						topPoints2[i].x1, topPoints2[i].y1,
+						topPoints2[i].x2, topPoints2[i].y2);
+					//highlightPoint(pt.xint, pt.yint);
+					line.push(pt);
+				}
+				matrixTop.push(line);
+			}
+			//alert(matrixTop[0].length);
+			/*for (i=0; i<matrixTop.length; i++)
+			{
+				for (j=0; j<matrixTop[i].length; j++)
+				{
+					if (i==8) highlightPoint2(matrixTop[i][j]);
+					//if (i==4) {alert(matrixTop[i][j].xint); }
+				}
+			}*/
+
+			for (i=0; i < bottomPoints2.length; i++)
+			{
+				var line=[];
+				for (j=0; j < bottomPoints1.length; j++)
+				{
+					var pt = intersection(bottomPoints1[j].x1, bottomPoints1[j].y1,
+						bottomPoints1[j].x2, bottomPoints1[j].y2,
+						bottomPoints2[i].x1, bottomPoints2[i].y1,
+						bottomPoints2[i].x2, bottomPoints2[i].y2);
+					//highlightPoint(pt.xint, pt.yint);
+					line.push(pt);
+				}
+				matrixBottom.push(line);
+			}
+			/*for (i=0; i<matrixBottom.length; i++)
+			{
+				for (j=0; j<matrixBottom[i].length; j++)
+				{
+					if (i==8) 
+						highlightPoint2(matrixBottom[i][j]);
+					//if (i==4) {alert(matrixTop[i][j].xint); }
+				}
+			}*/
+
+			for (i=0; i < leftPoints2.length; i++)
+			{
+				var line=[];
+				for (j=0; j < leftPoints1.length; j++)
+				{
+					var pt = intersection(leftPoints1[j].x1, leftPoints1[j].y1,
+						leftPoints1[j].x2, leftPoints1[j].y2,
+						leftPoints2[i].x1, leftPoints2[i].y1,
+						leftPoints2[i].x2, leftPoints2[i].y2);
+					//highlightPoint(pt.xint, pt.yint);
+					line.push(pt);
+				}
+				matrixLeft.push(line);
+			}
+
+			for (i=0; i < rightPoints2.length; i++)
+			{
+				var line=[];
+				for (j=0; j < rightPoints1.length; j++)
+				{
+					var pt = intersection(rightPoints1[j].x1, rightPoints1[j].y1,
+						rightPoints1[j].x2, rightPoints1[j].y2,
+						rightPoints2[i].x1, rightPoints2[i].y1,
+						rightPoints2[i].x2, rightPoints2[i].y2);
+					//highlightPoint(pt.xint, pt.yint);
+					line.push(pt);
+				}
+				matrixRight.push(line);
+			}
+
+
+			eraseScore();
+			drawScore();
 		}
-	}
 
-	//drawTable();
-}
-
-function StopGame()
-{
-	clearInterval(timerId);
-	points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
-		{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
-	pickpoint=null;
-	direction=[GO_UP];
-	score=0;
-
-	$("#pausebtn")[0].disabled=true;
-	//obj.value="Start";
-	$("#startbtn")[0].value="Start";
-	$("#difficulty")[0].disabled=false;
-	$("#optionsbtn")[0].disabled=false;
-	gameStarted=false;
-
-	clearArrays();
-	drawTable();
-	drawSnake();
-}
-
-//StartGame();
-
-function insideSnake()
-{
-	var ret = false;
-	for (i=0; i<points.length; i++)
-	{
-		var crtPoint = points[i];
-		if ((crtPoint.row==pickpoint.row) && (crtPoint.col==pickpoint.col) && 
-			(crtPoint.side==pickpoint.side))
+		function drawPart(part, erase)
 		{
-			ret=true;
-			break;
+			//alert(part);
+			if (part.side==SIDE_BOTTOM) // bottom
+			{
+				x1=matrixBottom[part.row][part.col].xint;
+				y1=matrixBottom[part.row][part.col].yint;
+				x2=matrixBottom[part.row][part.col+1].xint;
+				y2=matrixBottom[part.row][part.col+1].yint;
+				x3=matrixBottom[part.row+1][part.col+1].xint;
+				y3=matrixBottom[part.row+1][part.col+1].yint;
+				x4=matrixBottom[part.row+1][part.col].xint;
+				y4=matrixBottom[part.row+1][part.col].yint;
+			}
+			else if (part.side==SIDE_TOP) // top
+			{
+				x1=matrixTop[part.row][part.col].xint;
+				y1=matrixTop[part.row][part.col].yint;
+				x2=matrixTop[part.row][part.col+1].xint;
+				y2=matrixTop[part.row][part.col+1].yint;
+				x3=matrixTop[part.row+1][part.col+1].xint;
+				y3=matrixTop[part.row+1][part.col+1].yint;
+				x4=matrixTop[part.row+1][part.col].xint;
+				y4=matrixTop[part.row+1][part.col].yint;
+			}
+			else if (part.side==SIDE_FRONT) // front
+			{
+				x1=frontPoints2[part.col].x1;
+				y1=frontPoints1[part.row].y1;
+				x2=frontPoints2[part.col+1].x1;
+				y2=y1;
+				x3=x2;
+				y3=frontPoints1[part.row+1].y1;
+				x4=x1;
+				y4=y3;
+			}
+			else if (part.side==SIDE_LEFT) // left
+			{
+				x1=leftPoints2[part.col].x1;
+				y1=leftPoints1[part.row].y1;
+				x2=leftPoints2[part.col+1].x1;
+				y2=y1;
+				x3=x2;
+				y3=leftPoints1[part.row+1].y1;
+				x4=x1;
+				y4=y3;
+			}
+			else if (part.side==SIDE_RIGHT) // right
+			{
+				x1=rightPoints2[part.col].x1;
+				y1=rightPoints1[part.row].y1;
+				x2=rightPoints2[part.col+1].x1;
+				y2=y1;
+				x3=x2;
+				y3=rightPoints1[part.row+1].y1;
+				x4=x1;
+				y4=y3;
+			}
+			//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
+			
+			ctx.beginPath();
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
+			ctx.lineTo(x3, y3);
+			ctx.lineTo(x4, y4);
+			ctx.lineTo(x1, y1);
+			if (erase==1) // fill with background color
+			{
+				ctx.fillStyle=backgroundcolor;
+				ctx.strokeStyle="darkblue";
+			}
+			else if (erase==2) // pick part
+			{
+				ctx.fillStyle="red";
+				ctx.strokeStyle="rgb(240,240,240)";
+			}
+			else
+			{
+				ctx.fillStyle="rgb(0,255,0)";
+				ctx.strokeStyle="rgb(240,240,240)";
+			}
+			ctx.fill();
+			//if (erase==1)
+			{
+				ctx.stroke();
+			}
+
+			ctx.strokeStyle="darkblue";
 		}
-	}
-	return ret;
-}
 
-function randomGenerate()
-{
-	var randrow=parseInt((Math.random()*100)%rowcount);
-	var randcol=parseInt((Math.random()*100)%rowcount);
-	var randside=parseInt((Math.random()*10)%3)+1;
-
-	return {row:randrow, col:randcol, side:randside};
-}
-
-function intersection(x1,y1,x2,y2,x3,y3,x4,y4)
-{
-	var xr, yr;
-
-	if (x2==x1)
-	{
-		xr=x1;
-		yr=(y4-y3)*(x1-x3)/(x4-x3) + y3;
-	}
-	else if (x3==x4)
-	{
-		xr=x3;
-		yr=(y2-y1)*(x3-x1)/(x2-x1) + y1;
-	}
-	else
-	{
-		xr=(x1*(y2-y1)/(x2-x1)-x3*(y4-y3)/(x4-x3)+y3-y1)/((y2-y1)/(x2-x1)-(y4-y3)/(x4-x3));
-		yr=(y2-y1)*(xr-x1)/(x2-x1)+y1;
-	}
-	return {xint:xr,yint:yr};
-}
-
-function pauseclick()
-{
-	if (gameStarted==false)
-	{
-		return;
-	}
-	//alert(x);
-	var pausebtn = $("#pausebtn")[0];
-	if (pausebtn.value=="Pause")
-	{
-		gamePaused=true;
-		clearInterval(timerId);
-		pausebtn.value="Resume";
-		ctx.font="14px Courier";
-		ctx.strokeText("Paused", tableX+len+20, tableY+30);
-	}
-	else if (pausebtn.value=="Resume")
-	{
-		gamePaused=false;
-		//StartGame();
-		timerId = setInterval(callbackfn, speed);
-		pausebtn.value="Pause";
-		ctx.clearRect(tableX+len+18, tableY+12, 60, 30);
-	}
-}
-function startclick(obj)
-{
-	if (obj.value=="Start")
-	{
-		StartGame();
-	}
-	else if (obj.value=="Stop")
-	{
-		StopGame();
-
-		if (gamePaused==true)
+		function highlightPoint2(pt)
 		{
-			$("#pausebtn")[0].value="Pause";
-			ctx.clearRect(tableX+len+20, tableY+10, 60, 30);
-			gamePaused=false;
+			highlightPoint(pt.xint, pt.yint);
 		}
-	}
-}
-function optionsclick()
-{
-	var rows = prompt("Enter number of columns: ", rowcount);
-	var isnumber = parseInt(rows)||0;
-	//alert(isnumber);
-	if (isnumber != 0)
-	{
-		//alert("is integer");
-		rowcount=parseInt(rows);
-		points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
+
+		function highlightPoint(px,py)
+		{
+			var radius=3;
+			ctx.beginPath();
+			ctx.arc(px, py, radius, 0, 2*Math.PI);
+			ctx.stroke();
+		}
+
+		function drawSnake()
+		{
+			//alert(points.length);
+			//alert(points[1].x+", "+points[1].y);
+			for (i = 0; i < points.length; i++)
+			{
+				drawPart(points[i], 0);
+			}
+			//ctx.stroke();
+		}
+
+		function drawScore()
+		{
+			ctx.font="15px Courier";
+			ctx.strokeText("Score: "+score, tableX+len+20, tableY+53);
+		}
+
+		function eraseScore()
+		{
+			//ctx.rect(tableX+len+20, tableY+35, 120, 30); ctx.stroke();
+			ctx.clearRect(tableX+len+18, tableY+35, 110, 30);
+		}
+
+		var timerId, speed;
+		function StartGame()
+		{
+			//var speed;
+			var dif = $("#difficulty")[0];
+			//alert(dif.value);
+			if (dif.value=="easy")
+			{
+				speed=500;
+			}
+			else if (dif.value=="moderate")
+			{
+				speed=250;
+			}
+			else if (dif.value=="hard")
+			{
+				speed=100;
+			}
+			dif.disabled=true;
+			var options = $("#optionsbtn")[0];
+			options.disabled=true;
+			$("#pausebtn")[0].disabled=false;
+			$("#startbtn")[0].value="Stop";
+
+			timerId = setInterval(callbackfn, speed);
+			gameStarted=true;
+		}
+
+		function callbackfn()
+		{
+			if (skipnext == true)
+			{
+				skipnext=false;
+				return;
+			}
+
+			//ctx.clearRect(0,0,c.width,c.height);
+			var newhead;
+			if (direction.length > 1)
+			{
+				direction.shift();
+			}
+			var dir=direction[0];
+			
+			if (dir == GO_LEFT) // left
+			{
+				var head=points[0];
+				var newcol=head.col-1;
+				if (head.col==0)
+				{
+					//newhead={row:head.row, col:head.col-1, side:head.side};
+					newcol=rowcount-1;
+				}
+				
+				newhead={row:head.row, col:newcol, side:head.side};
+			}
+			else if (dir == GO_UP) // up
+			{
+				var head=points[0];
+				var newrow=head.row-1;
+				var newside=head.side;
+
+				if (head.row==0)
+				{
+					newrow=rowcount-1;
+					if (head.side==SIDE_BOTTOM)
+					{
+						newside=SIDE_FRONT;
+					}
+					else if (head.side==SIDE_FRONT)
+					{
+						newside=SIDE_TOP;
+					}
+					else if (head.side==SIDE_TOP)
+					{
+						newside=SIDE_BOTTOM;
+					}
+					//newrow=rowcount-1;
+				}
+				newhead={row:newrow, col:head.col, side:newside};
+			}
+			else if (dir == GO_RIGHT) // right
+			{
+				var head=points[0];
+				var newcol=head.col+1;
+				if (head.col==(rowcount-1))
+				{
+					newcol=0;
+				}
+				
+				newhead={row:head.row, col:newcol, side:head.side};
+			}
+			else if (dir == GO_DOWN)
+			{
+				var head=points[0];
+				var newrow=head.row+1;
+				var newside=head.side;
+
+				if (head.row==rowcount-1)
+				{
+					newrow=0;
+					if (head.side==SIDE_BOTTOM)
+					{
+						newside=SIDE_TOP;
+					}
+					else if (head.side==SIDE_FRONT)
+					{
+						newside=SIDE_BOTTOM;
+					}
+					else if (head.side==SIDE_TOP)
+					{
+						newside=SIDE_FRONT;
+					}
+				}
+				newhead={row:newrow, col:head.col, side:newside};
+			}
+
+			
+			if ((pickpoint == null) || (newhead.row!=pickpoint.row) || 
+				(newhead.col!=pickpoint.col) || (newhead.side!=pickpoint.side))
+			{
+				// erase tail
+				var tail=points.pop();
+				drawPart(tail, 1);
+			}
+			else
+			{
+				//snake found the brown part
+				pickpoint=null;
+				score++;
+				eraseScore();
+				drawScore();
+			}
+			points.splice(0,0,newhead);
+			drawPart(newhead, 0);
+
+			if (pickpoint == null)
+			{
+				pickpoint=randomGenerate();
+				//var x = insideSnake(); alert(x);
+				while (insideSnake() == true)
+				{
+					pickpoint=randomGenerate();
+				}
+				//alert("randrow="+pickpoint.row+", randcol="+pickpoint.col+
+				//	", randside="+pickpoint.side);
+				drawPart(pickpoint, 2);
+			}
+
+			//check for failure
+			for (i=1; i<points.length; i++)
+			{
+				var crtPoint = points[i];
+				if ((crtPoint.row==newhead.row) && (crtPoint.col==newhead.col) && 
+					(crtPoint.side==newhead.side))
+				{
+					// fail
+					//alert("Game over. Congratulations! Your score is: "+score);
+					ShowModal("Game over. Congratulations! Your score is: "+score);
+					StopGame();
+				}
+			}
+
+			//drawTable();
+		}
+
+		function StopGame()
+		{
+			clearInterval(timerId);
+			points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
+			pickpoint=null;
+			direction=[GO_UP];
+			score=0;
 
-		clearArrays();
-		drawTable();
-		drawSnake();
+			$("#pausebtn")[0].disabled=true;
+			//obj.value="Start";
+			$("#startbtn")[0].value="Start";
+			$("#difficulty")[0].disabled=false;
+			$("#optionsbtn")[0].disabled=false;
+			gameStarted=false;
 
-		StopGame();
-	}
-}
+			clearArrays();
+			drawTable();
+			drawSnake();
+		}
 
-</script>
+		//StartGame();
+
+		function insideSnake()
+		{
+			var ret = false;
+			for (i=0; i<points.length; i++)
+			{
+				var crtPoint = points[i];
+				if ((crtPoint.row==pickpoint.row) && (crtPoint.col==pickpoint.col) && 
+					(crtPoint.side==pickpoint.side))
+				{
+					ret=true;
+					break;
+				}
+			}
+			return ret;
+		}
+
+		function randomGenerate()
+		{
+			var randrow=parseInt((Math.random()*100)%rowcount);
+			var randcol=parseInt((Math.random()*100)%rowcount);
+			var randside=parseInt((Math.random()*10)%3)+1;
+
+			return {row:randrow, col:randcol, side:randside};
+		}
+
+		function intersection(x1,y1,x2,y2,x3,y3,x4,y4)
+		{
+			var xr, yr;
+
+			if (x2==x1)
+			{
+				xr=x1;
+				yr=(y4-y3)*(x1-x3)/(x4-x3) + y3;
+			}
+			else if (x3==x4)
+			{
+				xr=x3;
+				yr=(y2-y1)*(x3-x1)/(x2-x1) + y1;
+			}
+			else
+			{
+				xr=(x1*(y2-y1)/(x2-x1)-x3*(y4-y3)/(x4-x3)+y3-y1)/((y2-y1)/(x2-x1)-(y4-y3)/(x4-x3));
+				yr=(y2-y1)*(xr-x1)/(x2-x1)+y1;
+			}
+			return {xint:xr,yint:yr};
+		}
+
+		function pauseclick()
+		{
+			if (gameStarted==false)
+			{
+				return;
+			}
+			//alert(x);
+			var pausebtn = $("#pausebtn")[0];
+			if (pausebtn.value=="Pause")
+			{
+				gamePaused=true;
+				clearInterval(timerId);
+				pausebtn.value="Resume";
+				ctx.font="14px Courier";
+				ctx.strokeText("Paused", tableX+len+20, tableY+30);
+			}
+			else if (pausebtn.value=="Resume")
+			{
+				gamePaused=false;
+				//StartGame();
+				timerId = setInterval(callbackfn, speed);
+				pausebtn.value="Pause";
+				ctx.clearRect(tableX+len+18, tableY+12, 60, 30);
+			}
+		}
+		function startclick(obj)
+		{
+			if (obj.value=="Start")
+			{
+				StartGame();
+			}
+			else if (obj.value=="Stop")
+			{
+				StopGame();
+
+				if (gamePaused==true)
+				{
+					$("#pausebtn")[0].value="Pause";
+					ctx.clearRect(tableX+len+20, tableY+10, 60, 30);
+					gamePaused=false;
+				}
+			}
+		}
+		function optionsclick()
+		{
+			var rows = prompt("Enter number of columns: ", rowcount);
+			var isnumber = parseInt(rows)||0;
+			//alert(isnumber);
+			if (isnumber != 0)
+			{
+				//alert("is integer");
+				rowcount=parseInt(rows);
+				points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
+				{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+				{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+				{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
+
+				clearArrays();
+				drawTable();
+				drawSnake();
+
+				StopGame();
+			}
+		}
+
+		</script>
 <div class="modal" tabindex="0"><div class="modal-window">
-<div class="modal-header"><span class="close" onclick="CloseModal()">X</span></div>
-<div class="modal-content">
-<span id="modaltext">Some text in modal box</span></div></div></div>
-<header>Old Fashion Games<div style="width: 20px; display: inline-block"></div>Free Online Games</header>
-<nav class="menubar">
-	<a href="index.html" class="active">3Sides Snake</a>
-	<a href="ball.html" class="menu">Play the ball on bricks</a>
-	<a href="terms.html" class="menu">Terms and Privacy</a>
-</nav>
-<div class="content">
-<canvas id="myCanvas" style="border: blue solid 0px;" height="350" width="500"></canvas>
-<br>
-<div style="display: inline-block; width:36px;"></div>
-<input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
-<input type="button" onclick="startclick(this);" value="Start" id="startbtn">
-<select id="difficulty">
-	<option value="easy">Easy</option>
-	<option value="moderate" selected>Moderate</option>
-	<option value="hard">Hard</option>
-</select><div style="display: inline-block; width:50px;"></div>
-<input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br>
-You can use "P" for pause/resume.<br>
-This game works for most of the browsers.<br>
-This game is much like the classic Snake game. It doesn't need installation and can be played online. 
-It is a browser game.</div>
-<footer>You can write any suggestion on email address: daniel_mocanu2001@yahoo.com</footer>
-<div style="text-align: right;position: fixed;z-index:9999999;bottom: 0;width: auto;right: 1%;cursor: pointer;line-height: 0;display:block !important;"><a title="Hosted on free web hosting 000webhost.com. Host your own website for FREE." target="_blank" href="https://www.000webhost.com/?utm_source=000webhostapp&utm_campaign=000_logo&utm_medium=website&utm_content=footer_img"><img src="https://cdn.000webhost.com/000webhost/logo/footer-powered-by-000webhost-white2.png" alt="www.000webhost.com"></a></div><script>function getCookie(e){for(var t=e+"=",n=decodeURIComponent(document.cookie).split(";"),o=0;o<n.length;o++){for(var i=n[o];" "==i.charAt(0);)i=i.substring(1);if(0==i.indexOf(t))return i.substring(t.length,i.length)}return""}getCookie("hostinger")&&(document.cookie="hostinger=;expires=Thu, 01 Jan 1970 00:00:01 GMT;",location.reload());var notification=document.getElementsByClassName("notice notice-success is-dismissible"),hostingerLogo=document.getElementsByClassName("hlogo"),mainContent=document.getElementsByClassName("notice_content")[0],newList=["Powerful and Easy-To-Use Control Panel.","1-Click Auto Installer and 24/7 Live Support.","Free Domain, Email and SSL Bundle.","5x faster WordPress performance","Weekly Backups and Fast Response Time."];if(notification.length>0&&null!=mainContent){var googleFont=document.createElement("link");googleFontHref=document.createAttribute("href"),googleFontRel=document.createAttribute("rel"),googleFontHref.value="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600",googleFontRel.value="stylesheet",googleFont.setAttributeNode(googleFontHref),googleFont.setAttributeNode(googleFontRel);var css="@media only screen and (max-width: 768px) {.web-hosting-90-off-image-wrapper {position: absolute;} .notice_content {justify-content: center;} .web-hosting-90-off-image {opacity: 0.3;}} @media only screen and (min-width: 769px) {.notice_content {justify-content: space-between;} .web-hosting-90-off-image-wrapper {padding: 0 5%}} .content-wrapper {z-index: 5} .notice_content {display: flex; align-items: center;} * {-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;} .upgrade_button_red_sale{border: 0; border-radius: 3px; background-color: #ff123a !important; padding: 15px 55px !important; margin-left: 30px; font-family: 'Open Sans', sans-serif; font-size: 16px; font-weight: 600; color: #ffffff;} .upgrade_button_red_sale:hover{color: #ffffff !important; background: #d10303 !important;}",style=document.createElement("style"),sheet=window.document.styleSheets[0];style.styleSheet?style.styleSheet.cssText=css:style.appendChild(document.createTextNode(css)),document.getElementsByTagName("head")[0].appendChild(style),document.getElementsByTagName("head")[0].appendChild(googleFont);var button=document.getElementsByClassName("upgrade_button_red")[0],link=button.parentElement;link.setAttribute("href","https://www.hostinger.com/hosting-starter-offer?utm_source=000webhost&utm_medium=panel&utm_campaign=000-wp"),link.innerHTML='<button class="upgrade_button_red_sale">TRANSFER NOW</button>',(notification=notification[0]).setAttribute("style","padding-bottom: 10px; padding-top: 5px; background-image: url(https://cdn.000webhost.com/000webhost/promotions/springsale/mountains-neon-background.jpg); background-color: #000000; background-size: cover; background-repeat: no-repeat; color: #ffffff; border-color: #ff123a; border-width: 8px;"),notification.className="notice notice-error is-dismissible",(hostingerLogo=hostingerLogo[0]).setAttribute("src","https://cdn.000webhost.com/000webhost/promotions/springsale/logo-hostinger-white.svg"),hostingerLogo.setAttribute("style","float: none !important; height: auto; max-width: 100%; margin: 40px 20px 10px 30px;");var h1Tag=notification.getElementsByTagName("H1")[0];h1Tag.remove();var paragraph=notification.getElementsByTagName("p")[0];paragraph.innerHTML="Fast & Secure Web Hosting. <br>Limited time offer: get an SSL certificate for FREE",paragraph.setAttribute("style",'max-width: 600px; margin-left: 30px; font-family: "Open Sans", sans-serif; font-size: 16px; font-weight: 600;');var list=notification.getElementsByTagName("UL")[0];list.setAttribute("style","max-width: 675px;");for(var listElements=list.getElementsByTagName("LI"),i=0;i<newList.length;i++)listElements[i].setAttribute("style","color:#ffffff; list-style-type: disc; margin-left: 30px; font-family: 'Open Sans', sans-serif; font-size: 14px; font-weight: 300; line-height: 1.5;"),listElements[i].innerHTML=newList[i];listElements[listElements.length-1].remove();var org_html=mainContent.innerHTML,new_html='<div class="content-wrapper">'+mainContent.innerHTML+'</div><div class="web-hosting-90-off-image-wrapper"><img class="web-hosting-90-off-image" src="https://cdn.000webhost.com/000webhost/promotions/springsale/web-hosting-90-off.png"></div>';mainContent.innerHTML=new_html;var saleImage=mainContent.getElementsByClassName("web-hosting-90-off-image")[0]}</script></body>
+	<div class="modal-header"><span class="close" onclick="CloseModal()">X</span></div>
+	<div class="modal-content">
+		<span id="modaltext">Some text in modal box</span></div></div></div>
+		<header>5Side SnakeGame<div style="width: 20px; display: inline-block"></div></header>
+		<div class="content" style="text-align: center;">
+			<canvas id="myCanvas" style="border: blue solid 0px;" height="600" width="600"></canvas>
+			<!--게임이 뿌려지는 부분-->
+			<br>
+			<br>
+			<div style="display: inline-block; width:36px;"></div>
+			<input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
+			<input type="button" onclick="startclick(this);" value="Start" id="startbtn">
+			<select id="difficulty">
+				<option value="easy">Easy</option>
+				<option value="moderate" selected>Moderate</option>
+				<option value="hard">Hard</option>
+			</select><div style="display: inline-block; width:50px;"></div>
+			<input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br><br>
+			</div>
+		<footer>
+			Hello Open World!!
+		</footer>
+
+	</body>
 </html>
