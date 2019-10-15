@@ -15,6 +15,10 @@
 		var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
 		var len=310, rowcount=9;
 		var tableX=40, tableY;
+		document.addEventListener('mousedown', logKey);
+			function logKey(e) {
+			console.log("X : "+ e.clientX+", Y : "+e.clientY);
+			}
 
 		var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 
@@ -143,6 +147,7 @@
 
 		function drawTable()
 		{
+
 			// first clear the whole canvas
 			ctx.clearRect(0,0,c.width,c.height);
 
@@ -537,17 +542,27 @@
 				y3=matrixLeft[part.row+1][part.col+1].yint;//버그!!!
 				x4=matrixLeft[part.row+1][part.col].xint;
 				y4=matrixLeft[part.row+1][part.col].yint;
+				
+				console.log("x1 = "+x1 +", y1 = "+y1);
+				console.log("x2 = "+x2 +", y2 = "+y2);
+				console.log("x3 = "+x3 +", y3 = "+y3);
+				console.log("x4 = "+x4 +", y4 = "+y4);
 			}
 			else if (part.side==SIDE_RIGHT) // right
 			{
 				x1=matrixRight[part.row][part.col].xint;
 				y1=matrixRight[part.row][part.col].yint;
 				x2=matrixRight[part.row][part.col+1].xint;
-				y2=matrixRight[part.row][part.col+1].yint;
+				y2=matrixRight[part.row][part.col+1].yint;//얘도 버그
 				x3=matrixRight[part.row+1][part.col+1].xint;
 				y3=matrixRight[part.row+1][part.col+1].yint;
 				x4=matrixRight[part.row+1][part.col].xint;
 				y4=matrixRight[part.row+1][part.col].yint;
+
+				console.log("x1 = "+x1 +", y1 = "+y1);
+				console.log("x2 = "+x2 +", y2 = "+y2);
+				console.log("x3 = "+x3 +", y3 = "+y3);
+				console.log("x4 = "+x4 +", y4 = "+y4);
 			}
 			//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
 			
@@ -564,12 +579,6 @@
 			}
 			else if (erase==2) // pick part
 			{
-				console.log("x1 = "+x1 +", y1 = "+y1);
-				console.log("x2 = "+x2 +", y2 = "+y2);
-				console.log("x3 = "+x3 +", y3 = "+y3);
-				console.log("x4 = "+x4 +", y4 = "+y4);
-
-
 				ctx.fillStyle="red";
 				ctx.strokeStyle="rgb(240,240,240)";
 			}
@@ -580,9 +589,8 @@
 			}
 			ctx.fill();
 			//if (erase==1)
-			{
-				ctx.stroke();
-			}
+			ctx.stroke();
+			
 
 			ctx.strokeStyle="darkblue";
 		}
@@ -645,7 +653,7 @@
 			var options = $("#optionsbtn")[0];
 			options.disabled=true;
 			$("#pausebtn")[0].disabled=false;
-			$("#startbtn")[0].value="Stop";
+			$("#startbtn")[0].value="Restart";
 
 			timerId = setInterval(callbackfn, speed);//아마 이게 시작이였을듯
 			gameStarted=true;
@@ -807,14 +815,14 @@
 					// fail
 					//alert("Game over. Congratulations! Your score is: "+score);
 					ShowModal("Game over. Congratulations! Your score is: "+score);
-					StopGame();
+					RestartGame();
 				}
 			}
 
 			//drawTable();
 		}
 
-		function StopGame()
+		function RestartGame()
 		{
 			clearInterval(timerId);
 			points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
@@ -857,9 +865,11 @@
 
 		function randomGenerate()
 		{
-			//var randrow=parseInt((Math.random()*100)%rowcount);
-			var randrow = 8;
+			var randrow=parseInt((Math.random()*100)%rowcount);
+			// var randrow = 0;
+			// var randrow=parseInt((Math.random()*100)%2);
 			var randcol=parseInt((Math.random()*100)%rowcount);
+			// var randcol=0;
 			var randside=parseInt((Math.random()*10)%2)+4;
 			console.log("randside : " + randside);
 			console.log("randrow : "+randrow);
@@ -915,11 +925,9 @@
 			}
 		}
 
-		document.addEventListener('mousedown', logKey);
+		
 
-		function logKey(e) {
-			console.log("X : "+ e.clientX+", Y : "+e.clientY);
-		}
+		
 
 		function startclick(obj)
 		{
@@ -927,9 +935,9 @@
 			{
 				StartGame();
 			}
-			else if (obj.value=="Stop")
+			else if (obj.value=="Restart")
 			{
-				StopGame();
+				RestartGame();
 
 				if (gamePaused==true)
 				{
@@ -957,7 +965,7 @@
 				drawTable();
 				drawSnake();
 
-				StopGame();
+				RestartGame();
 			}
 		}
 
