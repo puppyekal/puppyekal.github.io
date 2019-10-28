@@ -17,7 +17,7 @@
 		var tableX=40, tableY;
 		document.addEventListener('mousedown', logKey);
 			function logKey(e) {
-			console.log("X : "+ e.clientX+", Y : "+e.clientY);
+			console.log("X : "+ (e.clientX - 12) + ", Y : "+ (e.clientY - 40));
 			}
 
 		var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
@@ -153,8 +153,6 @@
 
 			var x = tableX; //(c.width-len)/2;
 			var y = (c.height-len)/2;
-			console.log(x,y);
-			console.log(len);
 			tableY=y;
 			//alert("x="+x+" y="+y);
 			ctx.fillStyle=backgroundcolor;
@@ -227,8 +225,8 @@
 			//좌상, 좌상중앙
 
 
-			rightPoints1.push({x1:x+len,  y1:y,
-							   x2:x+3*len/4,y2:y+len/4});
+			rightPoints1.push({x1:x+3*len/4, y1:y+len/4,
+							   x2:x+len,y2:y});
 			//우상중앙, 우하중앙
 			rightPoints2.push({x1:x+3*len/4,y1:y+len/4,
 							   x2:x+3*len/4,y2:y+3*len/4});
@@ -310,10 +308,10 @@
 				leftPoints1.push({x1:x13,y1:y13,x2:x14,y2:y14});
 
 				x15=x+i*len/(4*rowcount);
-				y15=y+len-i*len/(4*rowcount);
+				y15=y+i*len/(4*rowcount);
 				ctx.moveTo(x15,y15);
 				x16=x15;
-				y16=y+i*len/(4*rowcount);
+				y16=y+len-i*len/(4*rowcount);
 				ctx.lineTo(x16,y16);
 				leftPoints2.push({x1:x15,y1:y15,x2:x16,y2:y16});
 
@@ -326,11 +324,11 @@
 				ctx.lineTo(x18,y18);
 				rightPoints1.push({x1:x17,y1:y17,x2:x18,y2:y18});
 
-				x19=x+len-i*len/(4*rowcount)
-				y19=y+i*len/(4*rowcount);
+				x19=x+3*len/4+i*len/(4*rowcount);
+				y19=y+len/4-i*len/(4*rowcount);
 				ctx.moveTo(x19,y19);
 				x20=x19;
-				y20=y+len-i*len/(4*rowcount);
+				y20=y+3*len/4+i*len/(4*rowcount);
 				ctx.lineTo(x20,y20);
 				rightPoints2.push({x1:x19,y1:y19,x2:x20,y2:y20});
 			}
@@ -344,11 +342,13 @@
 			frontPoints1.push({x1:x+len/4,y1:y+3*len/4,x2:x+3*len/4,y2:y+3*len/4});
 			frontPoints2.push({x1:x+3*len/4,y1:y+len/4,x2:x+3*len/4,y2:y+3*len/4});
 
-			leftPoints1.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
-			leftPoints2.push({x1:x,y1:y+len,x2:x+len/4,y2:y+3*len/4});
+			leftPoints1.push({x1:x,y1:y+len,x2:x+len/4,y2:y+3*len/4});
+			leftPoints2.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
 
-			rightPoints1.push({x1:x+len,y1:y,x2:x+len,y2:y+len});
-			rightPoints2.push({x1:x+3*len/4,y1:y+3*len/4,x2:x+len,y2:y+len});
+			rightPoints1.push({x1: x+3*len/4, y1: y+3*len/4, x2: x+len, y2: y+len});
+			rightPoints2.push({x1: x+len, y1: y, x2: x+len, y2: y+len});
+			console.log(leftPoints1);
+			console.log(leftPoints2);
 
 			//마지막 선들
 
@@ -479,12 +479,19 @@
 				var line=[];
 				for (j=0; j < rightPoints1.length; j++)
 				{
+					// console.log(rightPoints1[j].x1, rightPoints1[j].y1,
+					// 	rightPoints1[j].x2, rightPoints1[j].y2,
+					// 	rightPoints2[i].x1, rightPoints2[i].y1,
+					// 	rightPoints2[i].x2, rightPoints2[i].y2);
+
+
 					var pt = intersection(rightPoints1[j].x1, rightPoints1[j].y1,
 						rightPoints1[j].x2, rightPoints1[j].y2,
 						rightPoints2[i].x1, rightPoints2[i].y1,
 						rightPoints2[i].x2, rightPoints2[i].y2);
 					//highlightPoint(pt.xint, pt.yint);
 					line.push(pt);
+					// console.log("pt = " + pt.xint, pt.yint);
 				}
 				matrixRight.push(line);
 			}
@@ -499,6 +506,7 @@
 		//part=pickpoint,erase=2;->redsq
 		{
 			//alert(part);
+			
 			if (part.side==SIDE_BOTTOM) // bottom
 			{
 				x1=matrixBottom[part.row][part.col].xint;
@@ -542,11 +550,6 @@
 				y3=matrixLeft[part.row+1][part.col+1].yint;//버그!!!
 				x4=matrixLeft[part.row+1][part.col].xint;
 				y4=matrixLeft[part.row+1][part.col].yint;
-				
-				console.log("x1 = "+x1 +", y1 = "+y1);
-				console.log("x2 = "+x2 +", y2 = "+y2);
-				console.log("x3 = "+x3 +", y3 = "+y3);
-				console.log("x4 = "+x4 +", y4 = "+y4);
 			}
 			else if (part.side==SIDE_RIGHT) // right
 			{
@@ -555,17 +558,20 @@
 				x2=matrixRight[part.row][part.col+1].xint;
 				y2=matrixRight[part.row][part.col+1].yint;//얘도 버그
 				x3=matrixRight[part.row+1][part.col+1].xint;
-				y3=matrixRight[part.row+1][part.col+1].yint;
+				y3=matrixRight[part.row+1][part.col+1].yint;//마찬가지
 				x4=matrixRight[part.row+1][part.col].xint;
 				y4=matrixRight[part.row+1][part.col].yint;
-
-				console.log("x1 = "+x1 +", y1 = "+y1);
-				console.log("x2 = "+x2 +", y2 = "+y2);
-				console.log("x3 = "+x3 +", y3 = "+y3);
-				console.log("x4 = "+x4 +", y4 = "+y4);
 			}
 			//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
+			if(erase==2){
+				console.log("x1 = "+x1.toPrecision(6) +", y1 = "+y1.toPrecision(6));
+				console.log("x2 = "+x2.toPrecision(6) +", y2 = "+y2.toPrecision(6));
+				console.log("x3 = "+x3.toPrecision(6) +", y3 = "+y3.toPrecision(6));
+				console.log("x4 = "+x4.toPrecision(6) +", y4 = "+y4.toPrecision(6));
+			}
 			
+
+
 			ctx.beginPath();
 			ctx.moveTo(x1, y1);
 			ctx.lineTo(x2, y2);
@@ -776,6 +782,7 @@
 			
 			if ((pickpoint == null) || (newhead.row!=pickpoint.row) || 
 				(newhead.col!=pickpoint.col) || (newhead.side!=pickpoint.side))
+
 			{//아 조건 드럽게 어렵네 뭔소리지
 				// erase tail
 				var tail=points.pop();//point 배열에 가장 마지막에 있는 부분을 빼서 tail에 넣음
@@ -866,14 +873,31 @@
 		function randomGenerate()
 		{
 			var randrow=parseInt((Math.random()*100)%rowcount);
-			// var randrow = 0;
-			// var randrow=parseInt((Math.random()*100)%2);
 			var randcol=parseInt((Math.random()*100)%rowcount);
-			// var randcol=0;
-			var randside=parseInt((Math.random()*10)%2)+4;
-			console.log("randside : " + randside);
-			console.log("randrow : "+randrow);
-			console.log("randcol : "+randcol);
+			var randside = parseInt((Math.random()*10)%5)+1;
+			switch(randside){
+				case 1:
+				console.log("randside : top");
+				break;
+
+				case 2:
+				console.log("randside : front");
+				break;
+
+				case 3:
+				console.log("randside : bottom");
+				break;
+
+				case 4:
+				console.log("randside : left");
+				break;
+
+				case 5:
+				console.log("randside : right");
+				break;
+			}
+			console.log("randrow : " + randrow);
+			console.log("randcol : " + randcol);
 			return {row:randrow, col:randcol, side:randside};
 		}
 
