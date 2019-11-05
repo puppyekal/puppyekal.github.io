@@ -22,10 +22,15 @@
 
 		var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 
-		var points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
-					  {row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-					  {row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-					  {row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
+		var points = [{col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM},
+					  {col:parseInt(rowcount/2), row:rowcount-3, side:SIDE_BOTTOM},
+					  {col:parseInt(rowcount/2), row:rowcount-2, side:SIDE_BOTTOM},
+					  {col:parseInt(rowcount/2), row:rowcount-1, side:SIDE_BOTTOM}];
+
+		// var points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
+		// 			  {row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+		// 			  {row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
+		// 			  {row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
 					  //뭘까 이건
 					  //[{5,4,3},{6,4,3},{7,4,3},{8,4,3}]
 					  //맨처음 맵이 소환되는 위치 ㅇㅎ
@@ -71,7 +76,8 @@
 				pauseclick();
 			}
 
-			var dir=direction[direction.length-1];
+			var dir=direction[direction.length-1];//direction의 마지막부분
+			//==마지막 입력받은 방향
 
 			if ((e.keyCode == 38) && (dir != GO_DOWN) && (dir != GO_UP))
 			{
@@ -217,18 +223,18 @@
 			//뒷면ㅇㅇ
 
 			//와 계산하자!!
-			leftPoints1.push({x1:x,  y1:y,
+			leftPoints2.push({x1:x,  y1:y,
 							   x2:x+len/4,y2:y+len/4});
 			//좌상,우하
-			leftPoints2.push({x1:x,y1:y,
+			leftPoints1.push({x1:x,y1:y,
 							   x2:x,y2:y+len});
 			//좌상, 좌상중앙
 
 
-			rightPoints1.push({x1:x+3*len/4, y1:y+len/4,
+			rightPoints2.push({x1:x+3*len/4, y1:y+len/4,
 							   x2:x+len,y2:y});
 			//우상중앙, 우하중앙
-			rightPoints2.push({x1:x+3*len/4,y1:y+len/4,
+			rightPoints1.push({x1:x+3*len/4,y1:y+len/4,
 							   x2:x+3*len/4,y2:y+3*len/4});
 			//우상중앙. 우상
 
@@ -299,19 +305,19 @@
 
 
 				//left
-				x13=x;
-				y13=y+i*len/rowcount;
+				x13=x+i*len/(4*rowcount);
+				y13=y+i*len/(4*rowcount);
 				ctx.moveTo(x13,y13);
-				x14=x+len/4;
-				y14=y+len/4+i*len/(2*rowcount);
+				x14=x13;//x+len/4;
+				y14=y+len-i*len/(4*rowcount);//y+len/4+i*len/(2*rowcount);
 				ctx.lineTo(x14,y14);
 				leftPoints1.push({x1:x13,y1:y13,x2:x14,y2:y14});
 
-				x15=x+i*len/(4*rowcount);
-				y15=y+i*len/(4*rowcount);
+				x15=x;
+				y15=y+i*len/(rowcount);
 				ctx.moveTo(x15,y15);
-				x16=x15;
-				y16=y+len-i*len/(4*rowcount);
+				x16=x+len/4;
+				y16=y+len/4+i*len/(2*rowcount);
 				ctx.lineTo(x16,y16);
 				leftPoints2.push({x1:x15,y1:y15,x2:x16,y2:y16});
 
@@ -322,7 +328,7 @@
 				x18=x+len;
 				y18=y+i*len/rowcount;
 				ctx.lineTo(x18,y18);
-				rightPoints1.push({x1:x17,y1:y17,x2:x18,y2:y18});
+				rightPoints2.push({x1:x17,y1:y17,x2:x18,y2:y18});
 
 				x19=x+3*len/4+i*len/(4*rowcount);
 				y19=y+len/4-i*len/(4*rowcount);
@@ -330,7 +336,7 @@
 				x20=x19;
 				y20=y+3*len/4+i*len/(4*rowcount);
 				ctx.lineTo(x20,y20);
-				rightPoints2.push({x1:x19,y1:y19,x2:x20,y2:y20});
+				rightPoints1.push({x1:x19,y1:y19,x2:x20,y2:y20});
 			}
 
 			topPoints1.push({x1:x+len,y1:y,x2:x+3*len/4,y2:y+len/4});
@@ -342,13 +348,11 @@
 			frontPoints1.push({x1:x+len/4,y1:y+3*len/4,x2:x+3*len/4,y2:y+3*len/4});
 			frontPoints2.push({x1:x+3*len/4,y1:y+len/4,x2:x+3*len/4,y2:y+3*len/4});
 
-			leftPoints1.push({x1:x,y1:y+len,x2:x+len/4,y2:y+3*len/4});
-			leftPoints2.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
+			leftPoints2.push({x1:x,y1:y+len,x2:x+len/4,y2:y+3*len/4});
+			leftPoints1.push({x1:x+len/4,y1:y+len/4,x2:x+len/4,y2:y+3*len/4});
 
-			rightPoints1.push({x1: x+3*len/4, y1: y+3*len/4, x2: x+len, y2: y+len});
-			rightPoints2.push({x1: x+len, y1: y, x2: x+len, y2: y+len});
-			console.log(leftPoints1);
-			console.log(leftPoints2);
+			rightPoints2.push({x1: x+3*len/4, y1: y+3*len/4, x2: x+len, y2: y+len});
+			rightPoints1.push({x1: x+len, y1: y, x2: x+len, y2: y+len});
 
 			//마지막 선들
 
@@ -545,9 +549,9 @@
 				x1=matrixLeft[part.row][part.col].xint;
 				y1=matrixLeft[part.row][part.col].yint;
 				x2=matrixLeft[part.row][part.col+1].xint;
-				y2=matrixLeft[part.row][part.col+1].yint;//버그난다!!
+				y2=matrixLeft[part.row][part.col+1].yint;
 				x3=matrixLeft[part.row+1][part.col+1].xint;
-				y3=matrixLeft[part.row+1][part.col+1].yint;//버그!!!
+				y3=matrixLeft[part.row+1][part.col+1].yint;
 				x4=matrixLeft[part.row+1][part.col].xint;
 				y4=matrixLeft[part.row+1][part.col].yint;
 			}
@@ -556,20 +560,14 @@
 				x1=matrixRight[part.row][part.col].xint;
 				y1=matrixRight[part.row][part.col].yint;
 				x2=matrixRight[part.row][part.col+1].xint;
-				y2=matrixRight[part.row][part.col+1].yint;//얘도 버그
+				y2=matrixRight[part.row][part.col+1].yint;
 				x3=matrixRight[part.row+1][part.col+1].xint;
-				y3=matrixRight[part.row+1][part.col+1].yint;//마찬가지
+				y3=matrixRight[part.row+1][part.col+1].yint;
 				x4=matrixRight[part.row+1][part.col].xint;
 				y4=matrixRight[part.row+1][part.col].yint;
 			}
 			//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
-			if(erase==2){
-				console.log("x1 = "+x1.toPrecision(6) +", y1 = "+y1.toPrecision(6));
-				console.log("x2 = "+x2.toPrecision(6) +", y2 = "+y2.toPrecision(6));
-				console.log("x3 = "+x3.toPrecision(6) +", y3 = "+y3.toPrecision(6));
-				console.log("x4 = "+x4.toPrecision(6) +", y4 = "+y4.toPrecision(6));
-			}
-			
+		
 
 
 			ctx.beginPath();
@@ -665,7 +663,7 @@
 			gameStarted=true;
 		}
 
-		function callbackfn()//계속 호출될거임//방향키 누를떄마다
+		function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		{
 			if (skipnext == true)
 			{
@@ -675,41 +673,68 @@
 
 			//ctx.clearRect(0,0,c.width,c.height);
 			var newhead;
-			if (direction.length > 1)
+			if (direction.length > 1)//direction 길이가 1보다 크면
 			{
-				direction.shift();//direction 배열의 0번째 요소를 뺌
-			}
-			var dir=direction[0];
+				direction.shift();//direction[0]을 제거, 대체 왜??
+			}//무조건 1보다 크지않나...?
+
+			var dir=direction[0];//진행 방향 받아옴
+			console.log("dir = " + dir);
 			
+			var newcol, newrow, newside;
+
+
 			if (dir == GO_LEFT) // left
 			{
 				var head=points[0];
-				var newcol=head.col-1;
-				if (head.col==0)
+				console.log(head);
+				//스네이크의 머리
+
+				newcol=head.col-1;
+				newrow=head.row;
+				newside = head.side;
+
+				if (head.col==0)//얘가 -이었으면 newcol은 -1인데...?
 				{
 					//newhead={row:head.row, col:head.col-1, side:head.side};
-					newcol = rowcount - 1;
+					//그래서 바꾸네 마지막 x좌표로 //기본 rowcount=9
 					if (head.side==SIDE_LEFT)
 					{
+						newcol = rowcount - 1;
 						newside=SIDE_RIGHT;
 					}
 					else if (head.side==SIDE_RIGHT)
 					{
+						newcol = rowcount - 1;
 						newside=SIDE_FRONT;
 					}
 					else if (head.side==SIDE_FRONT)
 					{
+						newcol = rowcount - 1;
 						newside=SIDE_LEFT;
 					}
+					//왼,오,가운데이동은 상관 없음
+					//위,아래서 왼쪽 갈때 바꿔야됨
+					else if(head.side==Side_TOP){
+						console.log(11);
+						newside=SIDE_LEFT;
+						dir=GO_DOWN;
+					}
+					else if(head.side == SIDE_BOTTOM){
+						newside=SIDE_LEFT;
+						dir=GO_UP;
+					}
 				}
+				newhead={col:newcol, row:newrow, side:newside};
 				
-				newhead={row:head.row, col:newcol, side:head.side};
 			}
 			else if (dir == GO_UP) // up
 			{
 				var head=points[0];
-				var newrow=head.row-1;
-				var newside=head.side;
+				console.log(head);
+				newcol=head.col;
+				newrow = head.row-1;
+				newside=head.side;
 
 				if (head.row==0)//
 				{
@@ -729,12 +754,16 @@
 
 					//newrow=rowcount-1;
 				}
-				newhead={row:newrow, col:head.col, side:newside};
+				newhead={col:newcol, row:newrow, side:newside};
 			}
 			else if (dir == GO_RIGHT) // right
 			{
 				var head=points[0];
-				var newcol=head.col+1;
+				console.log(head);
+				newcol=head.col+1;
+				newside = head.side;
+				newrow = head.row;
+
 				if (head.col==(rowcount-1))
 				{
 					newcol=0;
@@ -752,13 +781,15 @@
 					}
 				}
 				
-				newhead={row:head.row, col:newcol, side:head.side};
+				newhead={col:newcol, row:newrow, side:newside};
 			}
 			else if (dir == GO_DOWN)
 			{
 				var head=points[0];
-				var newrow=head.row+1;
-				var newside=head.side;
+				console.log(head);
+				newrow=head.row+1;
+				newside=head.side;
+				newcol=head.col;
 
 				if (head.row==rowcount-1)
 				{
@@ -776,10 +807,12 @@
 						newside=SIDE_FRONT;
 					}
 				}
-				newhead={row:newrow, col:head.col, side:newside};
+				newhead={col:newcol, row:newrow, side:newside};
 			}
 
 			
+
+
 			if ((pickpoint == null) || (newhead.row!=pickpoint.row) || 
 				(newhead.col!=pickpoint.col) || (newhead.side!=pickpoint.side))
 
@@ -788,7 +821,7 @@
 				var tail=points.pop();//point 배열에 가장 마지막에 있는 부분을 빼서 tail에 넣음
 				drawPart(tail, 1);
 			}
-			else
+			else//ㅂ
 			{
 				//snake found the brown part
 				pickpoint=null;
@@ -874,7 +907,8 @@
 		{
 			var randrow=parseInt((Math.random()*100)%rowcount);
 			var randcol=parseInt((Math.random()*100)%rowcount);
-			var randside = parseInt((Math.random()*10)%5)+1;
+			//var randside = parseInt((Math.random()*10)%5)+1;
+			var randside = 5;
 			switch(randside){
 				case 1:
 				console.log("randside : top");
