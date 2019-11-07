@@ -800,18 +800,16 @@
 						newside = SIDE_TOP;
 					}
 					else if(head.side == SIDE_RIGHT){
-
-						//0.0->8.0
-						//1.0->8.1
-						//2.0->8.2
-						//3.0->8.3
+						//0.0->8.8
+						//1.0->8.7
+						//2.0->8.6
+						//3.0->8.5
 						//4.0->8.4
-						//5.0->8.5
-						//6.0->8.6
-						//7.0->8.7
-						//8.0->8.8	
-
-						newrow = newcol;
+						//5.0->8.3
+						//6.0->8.2
+						//7.0->8.1
+						//8.0->8.0	
+						newrow = (rowcount-1) - newcol;
 						newcol = 8;
 						direction[0]=GO_LEFT;
 						//dir = GO_UP;
@@ -847,28 +845,36 @@
 						newside=SIDE_RIGHT;
 					}
 					else if(head.side==SIDE_TOP){
-						//8.0->
-						//8.1->
-						//8.2->
-						//8.3->
-						//8.4->
-						//8.5->
-						//8.6->
-						//8.7->
-						//8.8->
-						
+						//8.0->8.0
+						//8.1->7.0
+						//8.2->6.0
+						//8.3->5.0
+						//8.4->4.0
+						//8.5->3.0
+						//8.6->2.0
+						//8.7->1.0
+						//8.8->0.0
+						newcol=(rowcount-1)-newrow;
+						newrow = 0;
+
+						newside = SIDE_RIGHT;
+						direction[0]=GO_DOWN;
 					}
 					else if(head.side==SIDE_BOTTOM){
-						//8.0->
-						//8.1->
-						//8.2->
-						//8.3->
-						//8.4->
-						//8.5->
-						//8.6->
-						//8.7->
-						//8.8->
-						
+						//8.0->0.8
+						//8.1->1.8
+						//8.2->2.8
+						//8.3->3.8
+						//8.4->4.8
+						//8.5->5.8
+						//8.6->6.8
+						//8.7->7.8
+						//8.8->8.8
+						newcol=newrow;
+						newrow = 8;
+
+						newside = SIDE_RIGHT;
+						direction[0]=GO_UP;
 					}
 				}
 				
@@ -884,18 +890,52 @@
 
 				if (head.row==rowcount-1)
 				{
-					newrow=0;
 					if (head.side==SIDE_BOTTOM)
 					{
+						newrow=0;
 						newside=SIDE_TOP;
 					}
 					else if (head.side==SIDE_FRONT)
 					{
+						newrow=0;
 						newside=SIDE_BOTTOM;
 					}
 					else if (head.side==SIDE_TOP)
 					{
+						newrow=0;
 						newside=SIDE_FRONT;
+					}
+					else if(head.side==SIDE_LEFT){
+						//0.8->0.8
+						//1.8->0.7
+						//2.8->0.6
+						//3.8->0.5
+						//4.8->0.4
+						//5.8->0.3
+						//6.8->0.2
+						//7.8->0.1
+						//8.8->0.0
+						newrow = newrow - 1 - newcol;
+						newcol = 0;
+
+						newside = SIDE_BOTTOM;
+						direction[0]=GO_RIGHT;
+					}
+					else if(head.side==SIDE_RIGHT){
+						//0.8->8.0
+						//1.8->8.1
+						//2.8->8.2
+						//3.8->8.3
+						//4.8->8.4
+						//5.8->8.5
+						//6.8->8.6
+						//7.8->8.7
+						//8.8->8.8
+						newrow=newcol;
+						newcol = 8;
+
+						newside = SIDE_BOTTOM;
+						direction[0]=GO_LEFT;
 					}
 				}
 				newhead={col:newcol, row:newrow, side:newside};
@@ -943,9 +983,10 @@
 				if ((crtPoint.row==newhead.row) && (crtPoint.col==newhead.col) && 
 					(crtPoint.side==newhead.side))
 				{
+					console.log("Death!");
 					// fail
 					//alert("Game over. Congratulations! Your score is: "+score);
-					ShowModal("Game over. Congratulations! Your score is: "+score);
+					ShowModal("Game over. Congratulations! Your score is: " + score);
 					RestartGame();
 				}
 			}
