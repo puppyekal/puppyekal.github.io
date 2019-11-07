@@ -13,7 +13,7 @@
 		var score=0;
 		var GO_LEFT=1, GO_RIGHT=2, GO_UP=3, GO_DOWN=4;
 		var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
-		var len=310, rowcount=9;
+		var len=500, rowcount=9;
 		var tableX=40, tableY;
 		document.addEventListener('mousedown', logKey);
 			function logKey(e) {
@@ -690,15 +690,17 @@
 				console.log(head);
 				//스네이크의 머리
 
-				newcol=head.col-1;
-				newrow=head.row;
+				newcol = head.col-1;
+				newrow = head.row;
 				newside = head.side;
+
+				var changeSide;
 
 				if (head.col==0)//얘가 -이었으면 newcol은 -1인데...?
 				{
 					//newhead={row:head.row, col:head.col-1, side:head.side};
 					//그래서 바꾸네 마지막 x좌표로 //기본 rowcount=9
-					if (head.side==SIDE_LEFT)
+					if (head.side == SIDE_LEFT)
 					{
 						newcol = rowcount - 1;
 						newside=SIDE_RIGHT;
@@ -710,19 +712,47 @@
 					}
 					else if (head.side==SIDE_FRONT)
 					{
+						console.log(33);
 						newcol = rowcount - 1;
 						newside=SIDE_LEFT;
 					}
 					//왼,오,가운데이동은 상관 없음
 					//위,아래서 왼쪽 갈때 바꿔야됨
-					else if(head.side==Side_TOP){
-						console.log(11);
+					else if(head.side == SIDE_TOP){
+						//0.0->0.0
+						//0.1->1.0
+						//0.2->2.0
+						//0.3->3.0
+						//0.4->4.0
+						//0.5->5.0
+						//0.6->6.0
+						//0.7->7.0
+						//0.8->8.0		
+						newcol = newrow;
+						newrow = 0;
+						direction[0]=GO_DOWN;	
+
 						newside=SIDE_LEFT;
-						dir=GO_DOWN;
+						//dir=GO_DOWN;
 					}
 					else if(head.side == SIDE_BOTTOM){
-						newside=SIDE_LEFT;
-						dir=GO_UP;
+						//0.8->0.8
+						//0.7->1.8
+						//0.6->2.8
+						//0.5->3.8
+						//0.4->4.8
+						//0.3->5.8
+						//0.2->6.8
+						//0.1->7.8
+						//0.0->8.8						
+						changeSide = newrow;
+						newrow = rowcount-1;
+						newcol = newrow - changeSide;
+						direction[0]=GO_UP;
+						//dir = GO_UP;
+
+						newside = SIDE_LEFT;
+
 					}
 				}
 				newhead={col:newcol, row:newrow, side:newside};
@@ -751,6 +781,43 @@
 					{
 						newside=SIDE_BOTTOM;
 					}
+					else if(head.side == SIDE_LEFT){
+						//0.0->0.0
+						//1.0->0.1
+						//2.0->0.2
+						//3.0->0.3
+						//4.0->0.4
+						//5.0->0.5
+						//6.0->0.6
+						//7.0->0.7
+						//8.0->0.8	
+
+						newrow = newcol;
+						newcol = 0;
+						direction[0]=GO_RIGHT;
+						//dir = GO_UP;
+
+						newside = SIDE_TOP;
+					}
+					else if(head.side == SIDE_RIGHT){
+
+						//0.0->8.0
+						//1.0->8.1
+						//2.0->8.2
+						//3.0->8.3
+						//4.0->8.4
+						//5.0->8.5
+						//6.0->8.6
+						//7.0->8.7
+						//8.0->8.8	
+
+						newrow = newcol;
+						newcol = 8;
+						direction[0]=GO_LEFT;
+						//dir = GO_UP;
+
+						newside = SIDE_TOP;
+					}
 
 					//newrow=rowcount-1;
 				}
@@ -764,7 +831,7 @@
 				newside = head.side;
 				newrow = head.row;
 
-				if (head.col==(rowcount-1))
+				if (head.col==rowcount-1)
 				{
 					newcol=0;
 					if (head.side==SIDE_RIGHT)
@@ -778,6 +845,30 @@
 					else if (head.side==SIDE_FRONT)
 					{
 						newside=SIDE_RIGHT;
+					}
+					else if(head.side==SIDE_TOP){
+						//8.0->
+						//8.1->
+						//8.2->
+						//8.3->
+						//8.4->
+						//8.5->
+						//8.6->
+						//8.7->
+						//8.8->
+						
+					}
+					else if(head.side==SIDE_BOTTOM){
+						//8.0->
+						//8.1->
+						//8.2->
+						//8.3->
+						//8.4->
+						//8.5->
+						//8.6->
+						//8.7->
+						//8.8->
+						
 					}
 				}
 				
@@ -907,8 +998,8 @@
 		{
 			var randrow=parseInt((Math.random()*100)%rowcount);
 			var randcol=parseInt((Math.random()*100)%rowcount);
-			//var randside = parseInt((Math.random()*10)%5)+1;
-			var randside = 5;
+			var randside = parseInt((Math.random()*10)%5)+1;
+			
 			switch(randside){
 				case 1:
 				console.log("randside : top");
@@ -1034,7 +1125,7 @@
 		<span id="modaltext">Some text in modal box</span></div></div></div>
 		<header>5 Side SnakeGame<div style="width: 20px; display: inline-block"></div></header>
 		<div class="content" style="text-align: center;">
-			<canvas id="myCanvas" style="border: blue solid 0px;" height="600" width="450"></canvas>
+			<canvas id="myCanvas" style="border: blue solid 0px;" height="640" width="640"></canvas>
 			<!--게임이 뿌려지는 부분-->
 			<br>
 			<br>
