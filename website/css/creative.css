@@ -57,6 +57,19 @@ html {
 article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block;
 }
+.footer-logo {
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.footer-logo .logo {
+  display: inline-block;
+}
+
+.footer-logo .logo>img {
+  width: 100%;
+  max-height: 70px;
+}
 
 body {
   margin: 0;
@@ -159,7 +172,7 @@ sup {
 }
 
 a {
-  color: #f4623a;
+  color: #f4623a; 
   text-decoration: none;
   background-color: transparent;
 }
@@ -181,6 +194,12 @@ a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
 
 a:not([href]):not([tabindex]):focus {
   outline: 0;
+}
+
+gamename {
+  color: #524c4b;
+  text-decoration: none;
+  background-color: transparent;
 }
 
 pre,
