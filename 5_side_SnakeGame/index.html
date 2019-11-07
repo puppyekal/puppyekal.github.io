@@ -690,11 +690,13 @@
 				console.log(head);
 				//스네이크의 머리
 
-				newcol=head.col-1;
-				newrow=head.row;
+				newcol = head.col-1;
+				newrow = head.row;
 				newside = head.side;
 
-				if (head.col==0)//얘가 -이었으면 newcol은 -1인데...?
+				var changeSide;
+
+				if (newcol==-1)//얘가 -이었으면 newcol은 -1인데...?
 				{
 					//newhead={row:head.row, col:head.col-1, side:head.side};
 					//그래서 바꾸네 마지막 x좌표로 //기본 rowcount=9
@@ -715,7 +717,7 @@
 					}
 					//왼,오,가운데이동은 상관 없음
 					//위,아래서 왼쪽 갈때 바꿔야됨
-					else if(head.side==Side_TOP){
+					else if(head.side == SIDE_TOP){
 						console.log(11);
 						newside=SIDE_LEFT;
 						dir=GO_DOWN;
@@ -723,6 +725,10 @@
 					else if(head.side == SIDE_BOTTOM){
 						newside=SIDE_LEFT;
 						dir=GO_UP;
+						changeSide = newrow;
+						newrow = newcol;
+						newcol = changeSide;
+
 					}
 				}
 				newhead={col:newcol, row:newrow, side:newside};
@@ -736,7 +742,7 @@
 				newrow = head.row-1;
 				newside=head.side;
 
-				if (head.row==0)//
+				if (newrow==-1)//
 				{
 					newrow=rowcount-1;
 					if (head.side==SIDE_BOTTOM)
@@ -764,7 +770,7 @@
 				newside = head.side;
 				newrow = head.row;
 
-				if (head.col==(rowcount-1))
+				if (newcol==rowcount)
 				{
 					newcol=0;
 					if (head.side==SIDE_RIGHT)
@@ -791,7 +797,7 @@
 				newside=head.side;
 				newcol=head.col;
 
-				if (head.row==rowcount-1)
+				if (newrow==rowcount)
 				{
 					newrow=0;
 					if (head.side==SIDE_BOTTOM)
@@ -907,8 +913,8 @@
 		{
 			var randrow=parseInt((Math.random()*100)%rowcount);
 			var randcol=parseInt((Math.random()*100)%rowcount);
-			//var randside = parseInt((Math.random()*10)%5)+1;
-			var randside = 5;
+			var randside = parseInt((Math.random()*10)%5)+1;
+			
 			switch(randside){
 				case 1:
 				console.log("randside : top");
