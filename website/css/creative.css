@@ -9586,6 +9586,12 @@ hr.divider {
   border-color: #f4623a;
 }
 
+hr.divider-under {
+  max-width: 30rem;
+  border-width: 0.1rem;
+  border-color: #6868689d;
+}
+
 hr.light {
   border-color: #fff;
 }
@@ -9605,6 +9611,9 @@ hr.light {
 
 .page-section {
   padding: 8rem 0;
+}
+.page-section-game {
+  padding: 4rem 0;
 }
 
 #mainNav {
@@ -9631,7 +9640,7 @@ hr.light {
   color: #f4623a;
 }
 
-#mainNav .navbar-nav .nav-item .nav-link.active {
+#mainNav .navbar-nav .nav-item .nav-link.active{
   color: #f4623a !important;
 }
 
