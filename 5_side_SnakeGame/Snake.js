@@ -595,37 +595,25 @@ function drawSnake()
 function drawScore()
 {
 	ctx.font="15px normal";
-	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 53);
+	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 20);
 }
 
 function eraseScore()
 {
 	//ctx.rect(tableX+len+20, tableY+35, 120, 30); ctx.stroke();
-	ctx.clearRect( c.width/2 - len/2, tableY - 70,  c.width/2 - len/2 + 2,  tableY - 43);
+	ctx.clearRect(c.width/2 - len/2, tableY - 70,  c.width/2 - len/2 + 10,  tableY - 10);
 }
 
 var timerId, speed;
+var MaximumSpeed = 95;
+var SpeedUP = 15;
+var StandardScore = 2;
 
 function StartGame()
 {
-	StartSpeed = 200;
-	MaximumSpeed = 100;
-	//var speed;
-	var dif = $("#difficulty")[0];
-	//alert(dif.value); 
-	if (dif.value=="easy")
-	{
-		speed=500;
-	}
-	else if (dif.value=="moderate")
-	{
-		speed=200;
-	}
-	else if (dif.value=="hard")
-	{
-		speed=100;
-	}
-	dif.disabled=true;
+	speed = 200;
+	
+
 	var options = $("#optionsbtn")[0];
 	options.disabled=true;
 	$("#pausebtn")[0].disabled=false;
@@ -635,8 +623,25 @@ function StartGame()
 	gameStarted=true;
 }
 
+function Interval(){
+	clearInterval(timerId);
+	timerId=setInterval(callbackfn, speed);
+}//change Snake's speed
+
 function callbackfn()//계속 호출될거임+방향키 누를떄마다
 {
+	if(speed > MaximumSpeed){
+		if(score > StandardScore){
+			speed -= SpeedUP;
+			StandardScore += 3;
+			Interval();//change Snake's speed
+		}
+	}
+
+	//console.log("StandardScore : "+StandardScore);
+	//console.log("speed : "+speed);
+
+
 	if (skipnext == true)
 	{
 		skipnext=false;
@@ -651,7 +656,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	}//무조건 1보다 크지않나...?
 
 	var dir=direction[0];//진행 방향 받아옴
-	console.log("dir = " + dir);
 	
 	var newcol, newrow, newside;
 
@@ -659,7 +663,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	if (dir == GO_LEFT) // left
 	{
 		var head=points[0];
-		console.log(head);
 		//스네이크의 머리
 
 		newcol = head.col-1;
@@ -684,7 +687,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 			}
 			else if (head.side==SIDE_FRONT)
 			{
-				console.log(33);
 				newcol = rowcount - 1;
 				newside=SIDE_LEFT;
 			}
@@ -733,7 +735,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	else if (dir == GO_UP) // up
 	{
 		var head=points[0];
-		console.log(head);
 		newcol=head.col;
 		newrow = head.row-1;
 		newside=head.side;
@@ -796,7 +797,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	else if (dir == GO_RIGHT) // right
 	{
 		var head=points[0];
-		console.log(head);
 		newcol=head.col+1;
 		newside = head.side;
 		newrow = head.row;
@@ -855,7 +855,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	else if (dir == GO_DOWN)
 	{
 		var head=points[0];
-		console.log(head);
 		newrow=head.row+1;
 		newside=head.side;
 		newcol=head.col;
@@ -940,10 +939,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	}
 	else	{
 		HalfPickpoint=null;
-		console.log("points = " + points);
-		console.log("points.length = " + points.length);
 		var halfLen = (points.length+1)/2;
-		console.log("halflen = " + halfLen);
 		for (var i = 0; i < halfLen; i++) {
 			//
 			var tail=points.pop();
@@ -1030,7 +1026,8 @@ function RestartGame()
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
-	var Redpickpoint=null;
+
+	var Redpickpoint = null;
 	var BlackPickPoint = null;
 	var HalfPickpoint = null;
 	var SlowPickPoint = null;
@@ -1041,7 +1038,6 @@ function RestartGame()
 	$("#pausebtn")[0].disabled=true;
 	//obj.value="Start";
 	$("#startbtn")[0].value="Start";
-	$("#difficulty")[0].disabled=false;
 	$("#optionsbtn")[0].disabled=false;
 	gameStarted=false;
 
@@ -1118,29 +1114,29 @@ function randomGenerate()
 	var randcol=parseInt((Math.random()*100)%rowcount);
 	var randside = parseInt((Math.random()*10)%5)+1;
 	
-	switch(randside){
-		case 1:
-		console.log("randside : top");
-		break;
+	// switch(randside){
+	// 	case 1:
+	// 	console.log("randside : top");
+	// 	break;
 
-		case 2:
-		console.log("randside : front");
-		break;
+	// 	case 2:
+	// 	console.log("randside : front");
+	// 	break;
 
-		case 3:
-		console.log("randside : bottom");
-		break;
+	// 	case 3:
+	// 	console.log("randside : bottom");
+	// 	break;
 
-		case 4:
-		console.log("randside : left");
-		break;
+	// 	case 4:
+	// 	console.log("randside : left");
+	// 	break;
 
-		case 5:
-		console.log("randside : right");
-		break;
-	}
-	console.log("randrow : " + randrow);
-	console.log("randcol : " + randcol);
+	// 	case 5:
+	// 	console.log("randside : right");
+	// 	break;
+	// }
+	//console.log("randrow : " + randrow);
+	//console.log("randcol : " + randcol);
 	return {row:randrow, col:randcol, side:randside};
 }
 
@@ -1179,8 +1175,8 @@ function pauseclick()
 		gamePaused=true;
 		clearInterval(timerId);
 		pausebtn.value="Resume";
-		ctx.font="14px Courier";
-		ctx.strokeText("Paused", tableX+len+20, tableY+30);
+		ctx.font="14px normal";
+		ctx.strokeText("Paused", c.width/2 - len/2, tableY - 43);
 	}
 	else if (pausebtn.value=="Resume")
 	{
@@ -1188,13 +1184,9 @@ function pauseclick()
 		//StartGame();
 		timerId = setInterval(callbackfn, speed);
 		pausebtn.value="Pause";
-		ctx.clearRect(tableX+len+18, tableY+12, 60, 30);
+		ctx.clearRect(c.width/2 - len/2, tableY - 42, c.width/2 - len/2 + 30, (c.height-len)/2 - 82 );
 	}
 }
-
-
-
-
 
 function startclick(obj)
 {
@@ -1214,6 +1206,7 @@ function startclick(obj)
 		}
 	}
 }
+
 function optionsclick()
 {
 	var rows = prompt("Enter number of columns: ", rowcount);
