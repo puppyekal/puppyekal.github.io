@@ -1,7 +1,12 @@
 var switchedTiles = new Array(10);
+var lavaswitchedTiles = new Array(10);
 var anyDown = [];
-
+  
 var Tile = {
+	vx:0,
+	vy:0,
+	x:0,
+	y:0,
 	init: function(x, y){
 		this.x = x;
 		this.y = y;
@@ -64,6 +69,24 @@ SwitchedTile.prototype.update = function() {
 		this.touchingAI = false;
 	this.justTouching = false;
 }
+// SWITCHED TILE (wall that can be on/off)
+var LavaSwitchedTile = function(x, y){
+	this.init(x, y);
+	this.blocksMovement = false;
+	this.color = "red";
+};
+LavaSwitchedTile.prototype = Object.create(Tile);
+LavaSwitchedTile.prototype.onCollide = function(ai) {
+	this.touchingAI = true;
+	// console.log(ai);
+	this.justTouching = true;
+	world.death();
+}
+LavaSwitchedTile.prototype.update = function() {
+	if(!this.justTouching)
+		this.touchingAI = false;
+	this.justTouching = false;
+}
 
 // SWITCH TILE (toggles wall)
 var SwitchTile = function(x, y, id){
@@ -88,6 +111,32 @@ SwitchTile.prototype.update = function() {
 	anyDown[this.switchingId] = false;
 }
 
+// SWITCH TILE (toggles wall)
+var LavaSwitchTile = function(x, y, id){
+	this.init(x, y);
+	this.switchingId = id;
+	this.color = "rgb(235,106,137)";
+}
+LavaSwitchTile.prototype = Object.create(Tile);
+LavaSwitchTile.prototype.onCollide = function(ai) {
+	this.down = true;
+	anyDown[this.switchingId] = true;
+	lavaswitchedTiles[this.switchingId].color = "rgb(235, 235, 235)";
+	lavaswitchedTiles[this.switchingId].onCollide = function(ai){};
+}
+LavaSwitchTile.prototype.update = function() {
+	if(!anyDown[this.switchingId]) {
+		if(!lavaswitchedTiles[this.switchingId].touchingAI) {
+			lavaswitchedTiles[this.switchingId].color = "rgb(185,6,48)";
+			lavaswitchedTiles[this.switchingId].onCollide = function(ai){
+				world.death();
+			};
+
+		}
+	}
+	anyDown[this.switchingId] = false;
+}
+
 // PLAYER WALL TILE (blocks only player)
 var PlayerWallTile = function(x, y){
 	this.init(x, y);
@@ -96,9 +145,17 @@ var PlayerWallTile = function(x, y){
 };
 PlayerWallTile.prototype = Object.create(Tile);
 
-
 var getTile = function(x, y, id) {
-	if(19<id && id<30) {
+	if(49<id && id<60) {
+		t = new LavaSwitchedTile(x, y)
+		lavaswitchedTiles[id-20] = t;
+		anyDown.push(false);
+		return t;
+	}
+	else if(39<id && id<50) {
+		return new LavaSwitchTile(x, y, id-10);
+	}
+	else if(19<id && id<30) {
 		t = new SwitchedTile(x, y)
 		switchedTiles[id-20] = t;
 		anyDown.push(false);

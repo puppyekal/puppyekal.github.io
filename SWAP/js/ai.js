@@ -21,6 +21,7 @@ var AI = {
 		if(tile.blocksMovement)
 			this.hitWall = true;
 	},
+	Collide: function(_ai){}
 };
 
 // STATIONARY AI 
@@ -64,7 +65,7 @@ var FollowAI = function(x, y) {
 	this.init(x, y);
 }
 FollowAI.prototype = Object.create(AI);
-FollowAI.prototype.update = function(gridSize) {
+FollowAI.prototype.update = function(_gridSize) {
 	if (!this.hitWall) {
 		this.prevX = this.x;
 		this.prevY = this.y;
@@ -120,7 +121,16 @@ var UpAI = function(x, y) {
 }
 UpAI.prototype = Object.create(AI);
 
-
+var DieAI = function(x,y) {
+	this.init(x,y);
+	this.vx = 7;
+	this.hitWall = false;
+	this.color = "red";
+}
+DieAI.prototype = Object.create(AI);
+DieAI.prototype.Collide = function(_ai) {
+	world.death();
+}
 var getAI = function(x, y, id) {
 	switch(id) {
 		case -1:
@@ -135,5 +145,7 @@ var getAI = function(x, y, id) {
 			return new LeftTurnRightAI(x, y);
 		case -6:
 			return new UpAI(x, y);
+		case -7:
+			return new DieAI(x,y);
 	}
 }
