@@ -938,7 +938,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 	}
 	else	{
-		HalfPickpoint=null;
+		HalfPickpoint = null;
 		var halfLen = (points.length+1)/2;
 		for (var i = 0; i < halfLen; i++) {
 			//
@@ -956,6 +956,16 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	else	{
 		SlowPickPoint=null;
 
+	}
+	if ((BlackPickPoint == null) || (newhead.row!=BlackPickPoint.row) || 
+		(newhead.col!=BlackPickPoint.col) || (newhead.side!=BlackPickPoint.side))	{
+
+	}
+	else	{
+		//newhead=null;
+		newhead={col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM};
+		ShowModal("Game over. Congratulations! Your score is: " + score);
+		RestartGame();
 	}
 	//////////////////////////
 
@@ -1022,15 +1032,17 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 function RestartGame()
 {
 	clearInterval(timerId);
+	var Redpickpoint = null;
+	var BlackPickPoint = null;
+	var HalfPickpoint = null;
+	var SlowPickPoint = null;
+
 	points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
 
-	var Redpickpoint = null;
-	var BlackPickPoint = null;
-	var HalfPickpoint = null;
-	var SlowPickPoint = null;
+
 
 	direction=[GO_UP];
 	score=0;
