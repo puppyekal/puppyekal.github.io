@@ -1,10 +1,9 @@
 var switchedTiles = new Array(10);
 var lavaswitchedTiles = new Array(10);
+var MovingTile = new Array(10);
 var anyDown = [];
   
 var Tile = {
-	vx:0,
-	vy:0,
 	x:0,
 	y:0,
 	init: function(x, y){
@@ -13,9 +12,33 @@ var Tile = {
 	},
 	update: function() {},
 	onCollide: function(ai) {},
+	disappear: function(ai){},
 	blocksMovement: false,
 	blocksOnlyPlayer: false,
 	color:"white",
+};
+var Moving = {
+	x:0,
+	y:0,
+	vx:0,
+	vy:0,
+	initing: function(x, y) {
+		this.x = x;
+		this.y = y;
+	},
+	update: function(gridSize) {
+		if(!this.hitWall) {
+			if(this.vx!=0)
+				this.x += gridSize / this.vx;
+			if(this.vy!=0)
+				this.y += gridSize / this.vy;
+		}
+		this.hitWall = false;
+	}, 
+	onCollide: function(tile) {
+		if(tile.blocksMovement)
+			this.hitWall = true;
+	},
 };
 
 // FLOOR TILE
@@ -145,7 +168,37 @@ var PlayerWallTile = function(x, y){
 };
 PlayerWallTile.prototype = Object.create(Tile);
 
+var invisibleTile = function(x,y,id){
+	this.init(x,y);
+	this.switchingId = id;
+	this.blocksMovement = true;
+	this.color = "white";
+};
+invisibleTile.prototype = Object.create(Tile);
+invisibleTile.prototype.onCollide = function(ai){
+	this.down = true;
+	anyDown[this.switchingId] = true;
+	invisibleTile[this.switchId].color = "black";
+}
+invisibleTile.prototype.update = function(){
+	if(!anyDown[this.switchingId]){
+		if(!invisibleTile[this.switchingId].touchingAI){
+			invisibleTile[this.switchingId].onCollide = function(ai){
+				invisibleTile[this.switchingId].color = "black";
+			};
+		}
+	}
+	anyDown[this.switchingId] = false;	
+}
+
 var getTile = function(x, y, id) {
+	if(61<=id && id<=100)
+	{
+		t = new invisibleTile(x,y,id)
+		invisibleTile[id] = t;
+		anyDown.push(false);
+		return t;
+	}
 	if(49<id && id<60) {
 		t = new LavaSwitchedTile(x, y)
 		lavaswitchedTiles[id-20] = t;
@@ -179,4 +232,3 @@ var getTile = function(x, y, id) {
 		}
 	}
 }
-

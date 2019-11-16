@@ -24,6 +24,12 @@ var player = function() {
 		this.y = ai.y;
 		this.currentAI = ai;
 	}
+	var setTile = function(ai){
+		this.trail.length = 0;
+		this.x = ai.x;
+		this.y = ai.y;
+		this.currentAI = ai;
+	}
 
 	var getAI = function() {
 		this.currentAI.x = this.x;
