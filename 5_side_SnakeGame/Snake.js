@@ -5,7 +5,12 @@ var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
 var len=500, rowcount=9;
 var tableX=40, tableY;
 var Snake=0, Line = 1, RedPoint=2, HalfPoint=3, SlowPoint=4, BlackPoint=5;
+var BlackCnt = 0, BlackStandardScore = 4;
 var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
+var timerId, speed;
+var MaximumSpeed = 95;
+var SpeedUP = 15;
+var StandardScore = 2;
 
 var points = [{col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-3, side:SIDE_BOTTOM},
@@ -22,8 +27,8 @@ $(document).ready(function()  {
 	drawSnake();//뱀소환
 });
 
-var Redpickpoint=null;
-var BlackPickPoint = null;
+var Redpickpoint = null;
+var BlackPickPoint = [null];
 var HalfPickpoint = null;
 var SlowPickPoint = null;
 var gameStarted=false;
@@ -604,10 +609,7 @@ function eraseScore()
 	ctx.clearRect(c.width/2 - len/2, tableY - 70,  c.width/2 - len/2 + 10,  tableY - 10);
 }
 
-var timerId, speed;
-var MaximumSpeed = 95;
-var SpeedUP = 15;
-var StandardScore = 2;
+
 
 function StartGame()
 {
@@ -730,7 +732,6 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 			}
 		}
 		newhead={col:newcol, row:newrow, side:newside};
-		
 	}
 	else if (dir == GO_UP) // up
 	{
@@ -938,7 +939,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 	}
 	else	{
-		HalfPickpoint=null;
+		HalfPickpoint = null;
 		var halfLen = (points.length+1)/2;
 		for (var i = 0; i < halfLen; i++) {
 			//
@@ -957,6 +958,27 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		SlowPickPoint=null;
 
 	}
+	for (var i = 0; i < BlackCnt; i++) {
+		if ((BlackPickPoint[i] == null) || (newhead.row!=BlackPickPoint[i].row) || 
+		(newhead.col!=BlackPickPoint[i].col) || (newhead.side!=BlackPickPoint[i].side))	{
+		}
+		else	{
+			//newhead=null;
+			newhead={col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM};
+			//죽었을때 머리부분 초기화
+			console.log("score1::" + score);
+			GameOver(score);
+			console.log("score3::" + score);
+//			ShowModal("Game over. Congratulations! Your score is: " + score);
+
+			BlackPickPoint=[null];
+			BlackCnt=0;
+			RestartGame();
+		}
+		
+	}
+
+	
 	//////////////////////////
 
 	points.splice(0,0,newhead);
@@ -981,14 +1003,19 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		}
 		drawPart(HalfPickpoint, HalfPoint);
 	}
-	if (BlackPickPoint == null)
+	if (score > BlackStandardScore)
 	{
-		BlackPickPoint=randomGenerate();
-		while (insideSnakeandBlackPoint() == true)
-		{
-			BlackPickPoint=randomGenerate();
-		}
-		drawPart(BlackPickPoint, BlackPoint);
+		BlackStandardScore += 2;
+
+		BlackPickPoint[BlackCnt] = randomGenerate();
+		//BlackPickPoint.push(randomGenerate());
+		console.log(BlackPickPoint);
+		// while (insideSnakeandBlackPoint() == true)
+		// {
+		// 	BlackPickPoint[BlackCnt]=randomGenerate();
+		// }
+		drawPart(BlackPickPoint[BlackCnt], BlackPoint);
+		BlackCnt++;
 	}
 	if (SlowPickPoint == null)
 	{
@@ -1011,26 +1038,34 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		{
 			// fail
 			//alert("Game over. Congratulations! Your score is: "+score);
-			ShowModal("Game over. Congratulations! Your score is: " + score);
-			RestartGame();
+			GameOver(score);
 		}
 	}
 
 	//drawTable();
 }
+function GameOver(Endscore){
+	console.log("EndSxore::"+Endscore);
+	ShowModal("Game over. Congratulations! Your score is: " + Endscore);
+	RestartGame();
+}
 
 function RestartGame()
 {
 	clearInterval(timerId);
+
 	points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
 
-	var Redpickpoint = null;
-	var BlackPickPoint = null;
-	var HalfPickpoint = null;
-	var SlowPickPoint = null;
+
+	Redpickpoint = null;
+	BlackPickPoint = [null];
+	BlackCnt = 0;
+	BlackStandardScore = 4;
+	HalfPickpoint = null;
+	SlowPickPoint = null;
 
 	direction=[GO_UP];
 	score=0;
@@ -1095,6 +1130,7 @@ function insideSnakeandHalfPoint()
 }
 function insideSnakeandBlackPoint()
 {
+	console.log(111111);
 	var ret = false;
 	for (i=0; i<points.length; i++)
 	{
@@ -1102,6 +1138,9 @@ function insideSnakeandBlackPoint()
 		if ((crtPoint.row==BlackPickPoint.row) && (crtPoint.col==BlackPickPoint.col) && 
 			(crtPoint.side==BlackPickPoint.side))
 		{
+			console.log(BlackPickPoint.row);
+			console.log(BlackPickPoint.col);
+			console.log(BlackPickPoint.side);
 			ret=true;
 			break;
 		}
@@ -1201,7 +1240,7 @@ function startclick(obj)
 		if (gamePaused==true)
 		{
 			$("#pausebtn")[0].value="Pause";
-			ctx.clearRect(tableX+len+20, tableY+10, 60, 30);
+			ctx.clearRect(c.width/2 - len/2, tableY - 42, c.width/2 - len/2 + 30, (c.height-len)/2 - 82 );
 			gamePaused=false;
 		}
 	}
