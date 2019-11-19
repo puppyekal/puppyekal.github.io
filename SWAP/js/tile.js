@@ -12,6 +12,7 @@ var Tile = {
 	},
 	update: function() {},
 	onCollide: function(ai) {},
+	Collide: function(player){},
 	disappear: function(ai){},
 	blocksMovement: false,
 	blocksOnlyPlayer: false,
@@ -58,10 +59,11 @@ WallTile.prototype = Object.create(Tile);
 // VICTORY TILE
 var VictoryTile = function(x, y){
 	this.init(x, y);
-	this.color = "rgb(163, 211, 156)"; //"rgba(95, 255, 80, 1.0)";	
+	this.color = "rgb(203, 255, 117)"; //"rgba(95, 255, 80, 1.0)";	
 };
 VictoryTile.prototype = Object.create(Tile);
 VictoryTile.prototype.onCollide = function(ai) {
+	console.log(ai);
 	world.victory();
 };
 
@@ -128,7 +130,7 @@ SwitchTile.prototype.update = function() {
 	if(!anyDown[this.switchingId]) {
 		if(!switchedTiles[this.switchingId].touchingAI) {
 			switchedTiles[this.switchingId].blocksMovement = true;
-			switchedTiles[this.switchingId].color = "rgb(253, 198, 137)";
+			switchedTiles[this.switchingId].color = "rgb(255, 220, 217)";
 		}
 	}
 	anyDown[this.switchingId] = false;
@@ -138,7 +140,7 @@ SwitchTile.prototype.update = function() {
 var LavaSwitchTile = function(x, y, id){
 	this.init(x, y);
 	this.switchingId = id;
-	this.color = "rgb(235,106,137)";
+	this.color = "pink";
 }
 LavaSwitchTile.prototype = Object.create(Tile);
 LavaSwitchTile.prototype.onCollide = function(ai) {
@@ -150,7 +152,7 @@ LavaSwitchTile.prototype.onCollide = function(ai) {
 LavaSwitchTile.prototype.update = function() {
 	if(!anyDown[this.switchingId]) {
 		if(!lavaswitchedTiles[this.switchingId].touchingAI) {
-			lavaswitchedTiles[this.switchingId].color = "rgb(185,6,48)";
+			lavaswitchedTiles[this.switchingId].color = "rgb(255,70,70)";
 			lavaswitchedTiles[this.switchingId].onCollide = function(ai){
 				world.death();
 			};
@@ -178,13 +180,37 @@ invisibleTile.prototype = Object.create(Tile);
 invisibleTile.prototype.onCollide = function(ai){
 	this.down = true;
 	anyDown[this.switchingId] = true;
-	invisibleTile[this.switchId].color = "black";
+	invisibleTile[this.switchId].color = "gray";
 }
 invisibleTile.prototype.update = function(){
 	if(!anyDown[this.switchingId]){
 		if(!invisibleTile[this.switchingId].touchingAI){
 			invisibleTile[this.switchingId].onCollide = function(ai){
-				invisibleTile[this.switchingId].color = "black";
+				invisibleTile[this.switchingId].color = "gray";
+			};
+		}
+	}
+	anyDown[this.switchingId] = false;	
+}
+var MovingTile = function(x,y,id){
+	this.init(x,y);
+	this.switchingId = id;
+	this.blocksOnlyPlayer = false;
+	this.blocksMovement = true;
+	this.color = "rgb(128,50,50)";
+};
+MovingTile.prototype = Object.create(Tile);
+MovingTile.prototype.onCollide = function(ai){
+	this.down = true;
+	anyDown[this.switchingId] = true;
+}
+MovingTile.prototype.update = function(){
+	if(!anyDown[this.switchingId]){
+		if(!MovingTile[this.switchingId].touchingAI){
+			MovingTile[this.switchingId].Collide = function(player){
+				MovingTile[this.switchingId].color = "green";
+				this.blocksMovement = false;
+				MovingTile[this.switchingId].blocksOnlyPlayer = true;
 			};
 		}
 	}
@@ -192,7 +218,14 @@ invisibleTile.prototype.update = function(){
 }
 
 var getTile = function(x, y, id) {
-	if(61<=id && id<=100)
+	if(211<=id && id<=250)
+	{
+		t = new MovingTile(x,y,id)
+		MovingTile[id] = t;
+		anyDown.push(false);
+		return t;
+	}
+	if(61<=id && id<=210)
 	{
 		t = new invisibleTile(x,y,id)
 		invisibleTile[id] = t;
