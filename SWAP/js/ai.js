@@ -128,8 +128,13 @@ var DieAI = function(x,y) {
 	this.color = "red";
 }
 DieAI.prototype = Object.create(AI);
-DieAI.prototype.Collide = function(tile) {
+DieAI.prototype.onCollide = function(ai)
+{
+	world.death();
+}
+DieAI.prototype.onCollide = function(tile) {
 	if(tile.blocksMovement && !this.hitWall){
+		this.hitWall = true;
 		world.death();
 
 	}
