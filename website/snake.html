@@ -86,54 +86,53 @@
 
 
   <!--SnakeGame-->
-  <script src="../5_side_SnakeGame/snake.js"></script>
+  <section class="page-section-game " id="snakegame">
+    <script src="../5_side_SnakeGame/snake.js"></script>
 
-  <div class="modal" tabindex="0">
-    <div class="modal-window">
-      <div class="modal-header"><span class="close" onclick="CloseModal()">X</span></div>
-      <div class="modal-content">
-        <span id="modaltext">Some text in modal box</span></div>
-    </div>
-  </div>
+    <div class="container">
+      <div class="row ">
+        <!--GameScreen-->
+        <div class="gameleft" style="border: rgb(36, 36, 36) solid 2px;" height="1000" width="500">
+            
+          <!--게임이 뿌려지는 부분-->
+          <canvas id="myCanvas" height="400" width="500" ></canvas>
 
-  <!--GameScreen-->
-  <div class="content">
-    <div class="content col-8">
-      <canvas id="myCanvas" style="border: rgb(36, 36, 36) solid 3px;" height="600" width="500">
-        <div id="cover">
-          <p>프로그램이 작동되지 않습니다.</p>
+          <!--game button-->
+          <div class="game button">
+            <div style="display: inline-block; width:36px; text-align:center"></div>
+            <input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
+            <input type="button" onclick="startclick(this);" value="Start" id="startbtn">
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="hard">Hard</option>
+            </select>
+            <div style="display: inline-block; width:50px;"></div>
+            <input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br><br>
+          </div>
         </div>
-      </canvas>
-    </div>
-     
-      <!--게임이 뿌려지는 부분-->
-      <br>
-      <div style="display: inline-block; width:36px; text-align:center"></div>
-      <input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
-      <input type="button" onclick="startclick(this);" value="Start" id="startbtn">
-      <select id="difficulty">
-        <option value="easy">Easy</option>
-        <option value="moderate" selected>Moderate</option>
-        <option value="hard">Hard</option>
-      </select>
-      <div style="display: inline-block; width:50px;"></div>
-      <input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br><br>
-    </div>
-
-    <!--HowtoPlay-->
-    <div class="content col-4 card-">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h5 class="card-title">How to play</h5>
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-            content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
+      
+        <!--HowtoPlay-->
+        <div class="howgameright">
+            
+          <div class="card- card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">How to play</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                content.</p>
+              <a href="#" class="card-link">Card link</a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+    
+  </section>
+
 
   <!-- Footer -->
   <footer class="bg-light py-5">

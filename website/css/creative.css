@@ -54,6 +54,24 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+.gameleft {
+
+	float: left;
+  position: relative;
+	width: 25em;
+  padding-left: 3em;
+
+}
+.howgameright {
+  float: left;
+  position: relative;
+  padding-left: 4em;
+  padding-top: 2em;
+  width: 24em;
+}
+
+
+
 article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block;
 }
