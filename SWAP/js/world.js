@@ -91,9 +91,9 @@ var world = function() {
 	}
 
 	var run = function() {
-		// var deltaTime = (Date.now() - prevTime);
-		// prevTime = Date.now();
-		// console.log(deltaTime);
+		var deltaTime = (Date.now() - prevTime);
+		prevTime = Date.now();
+		console.log(deltaTime);
 		if (!dialogue)	update();
 		renderer.draw(aiEntities, floor);
 		if (dialogue) {
@@ -142,8 +142,19 @@ var world = function() {
 		addToArray(touching.tiles, floor[coordToGrid(x, y+gridSize-10).y][coordToGrid(x, y+gridSize-10).x]);
 		addToArray(touching.tiles, floor[coordToGrid(x+gridSize-10, y+gridSize-10).y][coordToGrid(x+gridSize-10, y+gridSize-10).x]);
 		return touching;
-	}	
-
+	}
+	var disappear = function(ai)
+	{	
+		var bricks = {
+			tiles: [],
+		}
+		for(var c=0; c<brickColumnCount; c++) {
+			bricks[c] = [];
+			for(var r=0; r<brickRowCount; r++) {
+				bricks[c][r] = { x: 0, y: 0, status: 1 };
+			}
+		}
+	}
 	var coordToGrid = function(x, y) {
 		var grid = {};
 		grid.x = Math.round((x-gridSize/2)/gridSize);
