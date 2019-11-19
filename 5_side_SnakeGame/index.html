@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title>5 Side Snake Game</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<meta name="keywords" content="HTML,JavaScript,games,snake,browser,online,free,HTML5">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<script src="modal.js"></script>
+	<!-- 게임오버 -->
+	<script src="Snake.js"></script>
+	<div class="modal" tabindex="0"><div class="modal-window">
+	<div class="modal-header"><span class="close" onclick="CloseModal()">X</span></div>
+	<div class="modal-content">
+		<span id="modaltext">Some text in modal box</span></div></div></div>
+
+		<header>5 Side SnakeGame<div style="width: 20px; display: inline-block"></div></header>
+		<div class="content" style="text-align: center;">
+			<canvas id="myCanvas" style="border: blue solid 0px;" height="640" width="640"></canvas>
+			<!--게임이 뿌려지는 부분-->
+			<br>
+			<br>
+			<div style="display: inline-block; width:36px;"></div>
+			<input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
+			<input type="button" onclick="startclick(this);" value="Start" id="startbtn">
+			<div style="display: inline-block; width:50px;"></div>
+			<input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br><br>
+			</div>
+		<footer>
+			Hello Open World!!
+		</footer>
+	</body>
+</html>

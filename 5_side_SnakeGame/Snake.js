@@ -17,6 +17,10 @@ var points = [{col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-3, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-2, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-1, side:SIDE_BOTTOM}];
+
+if(localStorage.getItem("HighScore") == null){
+    localStorage.setItem('HighScore', 0);      
+}				
 //[{5,4,3},{6,4,3},{7,4,3},{8,4,3}]
 //맨처음 맵에 뱀이 소환되는 위치 ㅇㅎ
 $(document).ready(function()  {
@@ -41,6 +45,7 @@ window.addEventListener("keydown", function(e){
 	e.preventDefault();
 	e.stopPropagation();
 }, false);//방향키로 스코롤이동 방지
+
 window.addEventListener("keydown", function(e)
 {
 	if (ismodal == true)
@@ -1078,12 +1083,85 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 	//drawTable();
 }
-function GameOver(Endscore){
-	console.log("EndScore::"+Endscore);
-	ShowModal("Game over. Congratulations! Your score is: " + Endscore);
+function GameOver(score){
+      clearInterval(timerId);
+
+      var HighScore;
+      HighScore = localStorage.getItem('HighScore');
+
+      if(parseInt(HighScore) < Score){
+        HighScore = Score;
+      }
+      localStorage.setItem("HighScore", HighScore);
+      
+      ctx.beginPath();
+      ctx.rect(0, canvas.height * 0.3, 720, 500);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fill();
+
+      ctx.font = 'bold 100px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.fillText("Retry?", 360 , 500);
+      /////////////////////////////////////////
+      var YesBtn = new Path2D();
+      var NoBtn = new Path2D();
+
+      YesBtn.rect(20, 600, 330, 200);
+      ctx.fillStyle = "#3f5a9d";
+      ctx.fill(YesBtn);
+
+      NoBtn.rect(370, 600, 330, 200);
+      ctx.fillStyle = "#3f5a9d";
+      ctx.fill(NoBtn);
+
+      ctx.font = 'bold 100px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.fillText("Yes", 185 , 700);
+
+      ctx.font = 'bold 100px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.fillText("No", 535 , 700);
+      ////////////////////////////////////////////
+      canvas.onclick = function(e){
+        MouseX = e.offsetX;
+        MouseY = e.offsetY;
+
+        if(ctx.isPointInPath(YesBtn, MouseX, MouseY)){
+          Game_Start();
+          Game_Scene = setInterval(timerId, 10);
+        }
+        if(ctx.isPointInPath(NoBtn, MouseX, MouseY)){
+          GameStatus = 0;
+          Game_Scene = setInterval(timerId, 10);
+        }
+      }
+    }
+// function GameOver(Endscore){
+// 	console.log("EndScore::" + Endscore);
+// 	ShowModal("Game over. Congratulations! Your score is: ", Endscore);
 	
-	RestartGame();
-}
+// 	RestartGame();
+// }
+// function ShowModal(text, score)
+// {
+// 	ismodal = true;
+// 	var modal = document.querySelector(".modal");
+// 	document.getElementById("modaltext").innerHTML=text;
+// 	modal.style.display="block";
+// 	modal.focus();
+// }
+// function CloseModal()
+// {
+// 	document.querySelector(".modal").style.display="none";
+// 	ismodal = false;
+
+
 
 function RestartGame()
 {
