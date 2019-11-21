@@ -12,58 +12,15 @@
 	<script src="js/draw.js"></script>
 	<script src="js/keypress-1.0.8.min.js"></script>
 	<script src="js/input.js"></script>
-	<script type="text/javascript">
-		window.onload = function() {
-			//http://stackoverflow.com/questions/7425502/how-to-return-integer-from-url-hash-using-javascript
-			var level = window.location.hash.match(/\d+/) || 1;
-			world.init(level-1, "canvas", "hud", "tip");
-			document.getElementById("reset").onclick = function() {
-				world.resetLevel();
-			}
-			document.getElementById("skip").onclick = function() {
-				world.victory();
-			}
-			document.getElementById("mute").onclick = function() {
-				var music = document.getElementById("music");
-				if(music.paused) {
-					music.play();
-					document.getElementById("mute").innerHTML = "<i class='fa fa-volume-up'></i>";
-				}
-				else {
-					music.pause();
-					document.getElementById("mute").innerHTML = "<i class='fa fa-volume-off'></i>&nbsp;&nbsp;";
-				}
-			}
+	<script src="js/onload.js" type="text/javascript"></script>
 
-		}
-	</script>
 
 	<audio id="music" src="music.mp3" preload loop></audio>
 	<meta property="og:image" content="thumbnail.png" />
 
- <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+	<link href="style.css" rel="stylesheet" type="text/css">
 	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-	<style>
-		a.action-btn {
-			text-decoration: none;
-			color: gray;
-		}
-		a.action-btn:hover {
-			text-decoration: none;
-			color: gray;
-		}
-		body { 
-			font-family: "Open Sans", sans-serif; font-weight: 400; 
-/*			-webkit-transform: rotateZ(0deg);  Activates graphics acceleration and improves performance in some cases... 
-*/		}
-		#reset {
-			float: left;
-		}
-		#skip {
-			float: right;
-		}
-	</style>
 
 </head>
 <body>
@@ -84,17 +41,7 @@
 <!-- AddThis Smart Layers BEGIN -->
 <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
 <script type="text/javascript" src="https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-528c256940c52555"></script>
-<script type="text/javascript">
-  addthis.layers({
-    'theme' : 'transparent',
-    'share' : {
-      'position' : 'left',
-      'numPreferredServices' : 5
-    },  
-    'whatsnext' : {},  
-    'recommended' : {} 
-  });
-</script>  
+
 <!-- AddThis Smart Layers END -->
 </body>
 </html>

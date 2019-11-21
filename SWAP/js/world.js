@@ -93,7 +93,7 @@ var world = function() {
 	var run = function() {
 		var deltaTime = (Date.now() - prevTime);
 		prevTime = Date.now();
-		console.log(deltaTime);
+		//console.log(deltaTime);
 		if (!dialogue)	update();
 		renderer.draw(aiEntities, floor);
 		if (dialogue) {
@@ -135,8 +135,8 @@ var world = function() {
 		var touching = {
 			tiles: [],
 		}
-		var x = (ai.x - gridSize/2) + 5;
-		var y = (ai.y - gridSize/2) + 5;
+		var x = (ai.x - gridSize/2.1) + 5;
+		var y = (ai.y - gridSize/2.1) + 5;
 		addToArray(touching.tiles, floor[coordToGrid(x, y).y][coordToGrid(x, y).x]);
 		addToArray(touching.tiles, floor[coordToGrid(x+gridSize-10, y).y][coordToGrid(x+gridSize-10, y).x]);
 		addToArray(touching.tiles, floor[coordToGrid(x, y+gridSize-10).y][coordToGrid(x, y+gridSize-10).x]);

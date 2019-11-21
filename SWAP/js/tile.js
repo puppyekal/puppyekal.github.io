@@ -140,7 +140,7 @@ SwitchTile.prototype.update = function() {
 var LavaSwitchTile = function(x, y, id){
 	this.init(x, y);
 	this.switchingId = id;
-	this.color = "pink";
+	this.color = "rgb(255, 127, 80)";
 }
 LavaSwitchTile.prototype = Object.create(Tile);
 LavaSwitchTile.prototype.onCollide = function(ai) {
@@ -207,7 +207,7 @@ MovingTile.prototype.onCollide = function(ai){
 MovingTile.prototype.update = function(){
 	if(!anyDown[this.switchingId]){
 		if(!MovingTile[this.switchingId].touchingAI){
-			MovingTile[this.switchingId].Collide = function(player){
+			MovingTile[this.switchingId].Collide = function(ai){
 				MovingTile[this.switchingId].color = "green";
 				this.blocksMovement = false;
 				MovingTile[this.switchingId].blocksOnlyPlayer = true;
@@ -215,6 +215,15 @@ MovingTile.prototype.update = function(){
 		}
 	}
 	anyDown[this.switchingId] = false;	
+}
+
+var SlidingTile = function(x,y){
+	this.init(x,y);
+	this.color = "skyblue";
+};
+SlidingTile.prototype = Object.create(Tile);
+SlidingTile.prototype.update = function(player){
+	
 }
 
 var getTile = function(x, y, id) {
@@ -260,6 +269,8 @@ var getTile = function(x, y, id) {
 				return new LavaTile(x, y);
 			case 4: 
 				return new PlayerWallTile(x, y);
+			case 5:
+				return new SlidingTile(x,y);
 			default:
 				return new FloorTile(x, y);
 		}

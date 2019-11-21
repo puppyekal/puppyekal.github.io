@@ -3,7 +3,7 @@ var player = function() {
 	var prevX, prevY;
 	var vx = 0, vy = 0;
 	var currentAI;
-	var friction = 1.6;
+	var friction = 1.5;
 	var trail = [];
 	var gridSize;
 	// var hitRight = false;
@@ -97,36 +97,37 @@ var player = function() {
 				}
 			}
 		}
-		// justHit = true;
-		// if(vx*vx>vy*vy) {
-		// 	vx=0;
-		// 	hitSide = true;
-		// }
-		// if(vy*vy>vx*vx) {
-		// 	vy=0;
-		// 	hitUp = true;
-		// }
-
-		// if(vx*vx>vy*vy) {
-		// 	vx = 0;
-		// 	if(this.x>x)
-		// 		hitLeft = true;
-		// 	else if(this.x<x+gridSize)
-		// 		hitRight = true;
-		// }
-		// if(vy*vy>vx*vx) {
-		// 	vy = 0;
-		// 	if(this.y>y)
-		// 		hitUp = true;
-		// 	else if(this.y<y+gridSize)
-		// 		hitDown = true;
-		// }
-		// vx = vx / friction;
-		// vy = vy / friction;
-
-		// vx *= -0.3;
-		// vy *= -0.3;
 	}
+//		 justHit = true;
+//		 if(vx*vx>vy*vy) {
+//		 	vx=0;
+//		 	hitSide = true;
+//		 }
+//		 if(vy*vy>vx*vx) {
+//		 	vy=0;
+//		 	hitUp = true;
+//		 }
+//
+//		 if(vx*vx>vy*vy) {
+//		 	vx = 0;
+//		 	if(this.x>x)
+//		 		hitLeft = true;
+//		 	else if(this.x<x+gridSize)
+//		 		hitRight = true;
+//		 }
+//		 if(vy*vy>vx*vx) {
+//		 	vy = 0;
+//		 	if(this.y>y)
+//		 		hitUp = true;
+//		 	else if(this.y<y+gridSize)
+//		 		hitDown = true;
+//		 }
+//		 vx = vx / friction;
+//		 vy = vy / friction;
+
+	//	 vx *= -0.3;
+	//	 vy *= -0.3;
+	//}
 
 	var getVelocity = function() {
 		return {
