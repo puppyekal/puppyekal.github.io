@@ -65,7 +65,7 @@ var FollowAI = function(x, y) {
 	this.init(x, y);
 }
 FollowAI.prototype = Object.create(AI);
-FollowAI.prototype.update = function(_gridSize) {
+FollowAI.prototype.update = function(gridSize) {
 	if (!this.hitWall) {
 		this.prevX = this.x;
 		this.prevY = this.y;
