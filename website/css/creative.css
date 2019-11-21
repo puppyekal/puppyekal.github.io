@@ -3954,7 +3954,7 @@ input[type="button"].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #fff;
+  background-color: #f4623a;
   border-color: #dee2e6 #dee2e6 #fff;
 }
 
@@ -9778,4 +9778,9 @@ header.masthead h1 {
 
 #portfolio .container-fluid .portfolio-box:hover .portfolio-box-caption {
   opacity: 1;
+}
+
+
+.team{
+  background-color: #fdd647f6;
 }
