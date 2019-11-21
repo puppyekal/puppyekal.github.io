@@ -5,22 +5,25 @@ var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
 var len=500, rowcount=9;
 var tableX=40, tableY;
 var Snake=0, Line = 1, RedPoint=2, HalfPoint=3, SlowPoint=4, BlackPoint=5;
-var BlackCnt = 0, BlackStandardScore = 4;
+var BlackCnt = 0, BlackStandardScore = 0;
 var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 var timerId, speed;
 var MaximumSpeed = 95;
-var SpeedChange = 15;
+var SpeedChange = 90;
 var StandardScore = 2;
 var SlowCnt = 2, HalfCnt = 3;
-
+var mycanvas = document.getElementById('myCanvas');
 var points = [{col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-3, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-2, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-1, side:SIDE_BOTTOM}];
 
-if(localStorage.getItem("HighScore") == null){
+if(localStorage.getItem("HighScore") == "null"){
     localStorage.setItem('HighScore', 0);      
-}				
+}
+else if(localStorage.getItem("HighScore") == null){
+    localStorage.setItem('HighScore', 0);
+}
 //[{5,4,3},{6,4,3},{7,4,3},{8,4,3}]
 //맨처음 맵에 뱀이 소환되는 위치 ㅇㅎ
 $(document).ready(function()  {
@@ -39,7 +42,6 @@ var SlowPickPoint = null;
 var gameStarted=false;
 var gamePaused=false;
 var skipnext=false;
-var ismodal = false;
 
 window.addEventListener("keydown", function(e){
 	e.preventDefault();
@@ -48,16 +50,7 @@ window.addEventListener("keydown", function(e){
 
 window.addEventListener("keydown", function(e)
 {
-	if (ismodal == true)
-	{
-		if (e.keyCode == 27)
-		{
-			CloseModal();
-		}
-	//alert(e.keyCode);
-	return;
-	}
-	else if (gameStarted == false)
+	if (gameStarted == false)
 	{
 		return;
 	}
@@ -97,15 +90,8 @@ window.addEventListener("keydown", function(e)
 		callbackfn();
 		skipnext=true;
 	}
+});
 
-	
-});
-$('html, body').css({'overflow': '', 'height': '100%'});
-$('#myCanvas').on('scroll touchmove mousewheel', function(event) {
-	//event.preventDefault();
-	//event.stopPropagation();
-	return false;
-});
 var bottomPoints1=[];
 var bottomPoints2=[];
 
@@ -158,9 +144,9 @@ function drawTable()
 	var x = (c.width-len)/2; //(c.width-len)/2;
 	var y = (c.height-len)/2;
 	tableY=y;
-	//alert("x="+x+" y="+y);
+
 	ctx.fillStyle=backgroundcolor;
-	ctx.lineWidth=1;
+	ctx.lineWidth=2;
 	ctx.strokeStyle="darkblue";
 	//ctx.fillRect(x,y,3,3);
 	//ctx.moveTo(x,y);
@@ -272,12 +258,7 @@ function drawTable()
 		ctx.lineTo(x10,y10);
 		bottomPoints1.push({x1:x9,y1:y9,x2:x10,y2:y10});
 
-		/*x11=x+i*len/(4*rowcount);
-		y11=y+len-i*len/(4*rowcount);
-		ctx.moveTo(x11,y11);
-		x12=x+len-i*len/(4*rowcount);
-		y12=y11;
-		ctx.lineTo(x12,y12);*/
+	
 
 		x11=x+len/4-i*len/(4*rowcount);
 		y11=y+3*len/4+i*len/(4*rowcount);
@@ -341,60 +322,6 @@ function drawTable()
 	//마지막 선들
 
 	ctx.stroke();
-	//alert(bottomPoints1.length);
-	radius=3;
-	/*for (i=0;i<bottomPoints1.length;i++)
-	{
-	//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
-	//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
-		highlightPoint(bottomPoints1[i].x1, bottomPoints1[i].y1);
-		highlightPoint(bottomPoints1[i].x2, bottomPoints1[i].y2);
-	}*/
-	/*for (i=0;i<bottomPoints2.length;i++)
-	{
-	//	alert("x1="+bottomPoints1[i].x1+", y1="+bottomPoints1[i].y1+
-	//		", x2="+bottomPoints1[i].x2+", y2="+bottomPoints1[i].y2);
-		ctx.beginPath();
-		ctx.arc(bottomPoints2[i].x1, bottomPoints2[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(bottomPoints2[i].x2, bottomPoints2[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	/*for (i=0;i<topPoints1.length;i++)
-	{
-		ctx.beginPath();
-		ctx.arc(topPoints1[i].x1, topPoints1[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(topPoints1[i].x2, topPoints1[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	/*for (i=0;i<topPoints2.length;i++)
-	{
-		ctx.beginPath();
-		ctx.arc(topPoints2[i].x1, topPoints2[i].y1, radius, 0, 2*Math.PI);
-		ctx.arc(topPoints2[i].x2, topPoints2[i].y2, radius, 0, 2*Math.PI);
-		ctx.stroke();
-	}*/
-	//for (i=8;i</*frontPoints1.length*/ 9;i++)
-	/*{
-		//ctx.beginPath();
-		//ctx.arc(frontPoints1[i].x1, frontPoints1[i].y1, radius, 0, 2*Math.PI);
-		//ctx.arc(frontPoints1[i].x2, frontPoints1[i].y2, radius, 0, 2*Math.PI);
-		//ctx.stroke();
-		highlightPoint(frontPoints1[i].x1, frontPoints1[i].y1);
-		highlightPoint(frontPoints1[i].x2, frontPoints1[i].y2);
-	}*/
-	/*for (i=0;i<frontPoints2.length;i++)
-	{
-		//ctx.beginPath();
-		//ctx.arc(frontPoints2[i].x1, frontPoints2[i].y1, radius, 0, 2*Math.PI);
-		//ctx.arc(frontPoints2[i].x2, frontPoints2[i].y2, radius, 0, 2*Math.PI);
-		//ctx.stroke();
-		highlightPoint(frontPoints2[i].x1, frontPoints2[i].y1);
-		highlightPoint(frontPoints2[i].x2, frontPoints2[i].y2);
-	}*/
-	//ctx.font="20px Calibri";
-	//ctx.strokeText("3Sides Snake", x+len+20, y+5);
-
-
 
 
 	//이거부터 뭔지 모르겠네 ㅁㄴㅇㄹ 아마도 빨간거 만드는 함수인가? 아니네 뱀 좌표표시하는 함수였네 
@@ -408,20 +335,11 @@ function drawTable()
 				topPoints1[j].x2, topPoints1[j].y2,
 				topPoints2[i].x1, topPoints2[i].y1,
 				topPoints2[i].x2, topPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
 			line.push(pt);
 		}
 		matrixTop.push(line);
 	}
-	//alert(matrixTop[0].length);
-	/*for (i=0; i<matrixTop.length; i++)
-	{
-		for (j=0; j<matrixTop[i].length; j++)
-		{
-			if (i==8) highlightPoint2(matrixTop[i][j]);
-			//if (i==4) {alert(matrixTop[i][j].xint); }
-		}
-	}*/
+	
 
 	for (i=0; i < bottomPoints2.length; i++)
 	{
@@ -432,20 +350,11 @@ function drawTable()
 				bottomPoints1[j].x2, bottomPoints1[j].y2,
 				bottomPoints2[i].x1, bottomPoints2[i].y1,
 				bottomPoints2[i].x2, bottomPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
 			line.push(pt);
 		}
 		matrixBottom.push(line);
 	}
-	/*for (i=0; i<matrixBottom.length; i++)
-	{
-		for (j=0; j<matrixBottom[i].length; j++)
-		{
-			if (i==8) 
-				highlightPoint2(matrixBottom[i][j]);
-			//if (i==4) {alert(matrixTop[i][j].xint); }
-		}
-	}*/
+
 
 	for (i=0; i < leftPoints2.length; i++)
 	{
@@ -456,7 +365,6 @@ function drawTable()
 				leftPoints1[j].x2, leftPoints1[j].y2,
 				leftPoints2[i].x1, leftPoints2[i].y1,
 				leftPoints2[i].x2, leftPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
 			line.push(pt);
 		}
 		matrixLeft.push(line);
@@ -471,9 +379,7 @@ function drawTable()
 				rightPoints1[j].x2, rightPoints1[j].y2,
 				rightPoints2[i].x1, rightPoints2[i].y1,
 				rightPoints2[i].x2, rightPoints2[i].y2);
-			//highlightPoint(pt.xint, pt.yint);
 			line.push(pt);
-			// console.log("pt = " + pt.xint, pt.yint);
 		}
 		matrixRight.push(line);
 	}
@@ -487,7 +393,6 @@ function drawPart(part, erase)
 //part=points[i],erase=0;->snake
 //part=Redpickpoint,erase=2;->redsq
 {
-	//alert(part);
 	
 	if (part.side==SIDE_BOTTOM) // bottom
 	{
@@ -544,9 +449,6 @@ function drawPart(part, erase)
 		x4=matrixRight[part.row+1][part.col].xint;
 		y4=matrixRight[part.row+1][part.col].yint;
 	}
-	//alert("x1="+x1+" y1="+y1+", x2="+x2+" y2="+y2+", x3="+x3+" y3="+y3);
-
-
 
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -562,19 +464,19 @@ function drawPart(part, erase)
 	else if (erase==RedPoint) // red part
 	{
 		ctx.fillStyle="red";
-		ctx.strokeStyle="rgb(240,240,240)";
+		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == HalfPoint){
 		ctx.fillStyle="rgb(33,197,255)";
-		ctx.strokeStyle="rgb(240,240,240)";
+		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == SlowPoint){
 		ctx.fillStyle="rgb(255,207,55)";
-		ctx.strokeStyle="rgb(240,240,240)";
+		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == BlackPoint){
 		ctx.fillStyle="rgb(0,0,0)";
-		ctx.strokeStyle="rgb(240,240,240)";
+		ctx.strokeStyle="darkblue";
 
 	}
 	else if(erase == Snake) //snake
@@ -590,40 +492,26 @@ function drawPart(part, erase)
 	ctx.strokeStyle="darkblue";
 }
 
-function highlightPoint2(pt)
-{
-	highlightPoint(pt.xint, pt.yint);
-}
-
-function highlightPoint(px,py)
-{
-	var radius=3;
-	ctx.beginPath();
-	ctx.arc(px, py, radius, 0, 2*Math.PI);
-	ctx.stroke();
-}
-
 function drawSnake()
 {
-	//alert(points.length);
-	//alert(points[1].x+", "+points[1].y);
 	for (i = 0; i < points.length; i++)//뱀길이만큼 돌림ㅇㅇ
 	{
 		drawPart(points[i], Snake);
 	}
-	//ctx.stroke();
 }
 
 function drawScore()
 {
 	ctx.font="15px normal";
+	ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
 	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 20);
+	ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 130, tableY - 20);
 }
 
 function eraseScore()
 {
-	//ctx.rect(tableX+len+20, tableY+35, 120, 30); ctx.stroke();
-	ctx.clearRect(c.width/2 - len/2, tableY - 70,  c.width/2 - len/2 + 10,  tableY - 10);
+	ctx.clearRect(c.width/2 - len/2, tableY - 70,  c.width/2 + 200,  tableY - 10);
 }
 
 
@@ -632,7 +520,6 @@ function StartGame()
 {
 	speed = 200;
 	
-
 	var options = $("#optionsbtn")[0];
 	options.disabled=true;
 	$("#pausebtn")[0].disabled=false;
@@ -641,29 +528,74 @@ function StartGame()
 	timerId = setInterval(callbackfn, speed);//아마 이게 시작이였을듯
 	gameStarted=true;
 }
+var okBtn = new Path2D();
+
+function GameOver(){
+	clearInterval(timerId);
+	$("#pausebtn")[0].disabled=true;
+	$("#optionsbtn")[0].disabled=false;
+	gameStarted=false;
+    
+    ctx.beginPath();
+    ctx.rect((c.width-len)/2,(c.height-len)/2, 500, 500);
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fill();
+
+    ctx.font = 'bold 50px Arial';
+    ctx.fillStyle = 'white';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText("Game Over", (c.width-len)/2 + 250, 150);
+    ctx.fillText("Your Score : " + score, (c.width-len)/2 + 250, 250);
+    ctx.fillText("High Score : " + localStorage.getItem('HighScore'), (c.width-len)/2 + 250, 350);
+
+
+    score = 0 ;
+    /////////////////////////////////////////
+
+    okBtn.rect(c.width/2 - 100, 400, 200, 100);
+    ctx.fillStyle = "#3f5a9d";
+    ctx.fill(okBtn); 
+
+	ctx.font = 'bold 50px Arial';
+    ctx.fillStyle = 'white';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText("OK", c.width/2, 450);
+
+    document.onclick = ClickBtn;
+    var btnEvent = document.getElementById("myBtn");
+}
+
+function ClickBtn(e) {
+	MouseX = e.offsetX;
+	MouseY = e.offsetY;
+
+	if(ctx.isPointInPath(okBtn, MouseX, MouseY)){
+		RestartGame();
+	}
+}
+
 
 function Interval(){
+	console.log("Change Speed! : " + speed);
 	clearInterval(timerId);
-	timerId=setInterval(callbackfn, speed);
+	timerId = setInterval(callbackfn, speed);
 }//change Snake's speed
 
 function callbackfn()//계속 호출될거임+방향키 누를떄마다
 {
 	if(speed > MaximumSpeed){
 		if(score > StandardScore){
-			speed -= SpeedChange;
+			speed -= 15;
 			StandardScore += 3;
 			Interval();//change Snake's speed
 		}
 	}
 
-	//console.log("StandardScore : "+StandardScore);
-	//console.log("speed : "+speed);
-
-
 	if (skipnext == true)
 	{
-		skipnext=false;
+		skipnext = false;
 		return;
 	}
 
@@ -930,12 +862,10 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		newhead={col:newcol, row:newrow, side:newside};
 	}
 
-	
-
 
 	if ((Redpickpoint == null) || (newhead.row!=Redpickpoint.row) || 
 		(newhead.col!=Redpickpoint.col) || (newhead.side!=Redpickpoint.side))	{
-		//아 조건 드럽게 어렵네 뭔소리지
+		//아 조건 드럽게 어렵네 뭔소리지//안 닿은 경우 || 빨간애가 null인경우 
 		// erase tail
 		var tail=points.pop();//point 배열에 가장 마지막에 있는 부분을 빼서 tail에 넣음
 		drawPart(tail, Line);
@@ -944,17 +874,26 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	else//닿으면 지워버리고 점수올림
 	{
 		//snake found the brown part
-		Redpickpoint=null;
 		score++;
+		Redpickpoint=null;
+		var HighScore;
+    	HighScore = localStorage.getItem('HighScore');
+
+	    if(parseInt(HighScore) < score){	
+	      HighScore = score;
+	    }
+	    localStorage.setItem("HighScore", HighScore);
+
+
 		eraseScore();
 		drawScore();
 	}
+	points.splice(0,0,newhead);
+	drawPart(newhead, Snake);
 	//////////////////////////
 	//halfpoint
 	if ((HalfPickpoint == null) || (newhead.row!=HalfPickpoint.row) || 
-		(newhead.col!=HalfPickpoint.col) || (newhead.side!=HalfPickpoint.side))	{
-
-	}
+		(newhead.col!=HalfPickpoint.col) || (newhead.side!=HalfPickpoint.side))	{	}
 	else	{
 		HalfPickpoint = null;
 		var halfLen = (points.length+1)/2;
@@ -968,58 +907,41 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 	//////////////////////////
 	//slowpoint
 	if ((SlowPickPoint == null) || (newhead.row!=SlowPickPoint.row) || 
-		(newhead.col!=SlowPickPoint.col) || (newhead.side!=SlowPickPoint.side))	{
-
-	}
-	else	{
+		(newhead.col!=SlowPickPoint.col) || (newhead.side!=SlowPickPoint.side))	{	}
+	else {
 		SlowPickPoint=null;
-		speed += SpeedChange;
+		speed = 200;
+		Interval();//change Snake's speed
 	}
-	for (var i = 0; i < BlackCnt; i++) {
-		if ((BlackPickPoint[i] == null) || (newhead.row!=BlackPickPoint[i].row) || 
-		(newhead.col!=BlackPickPoint[i].col) || (newhead.side!=BlackPickPoint[i].side))	{
-		}
-		else	{
-			//newhead=null;
-			newhead={col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM};
-			//죽었을때 머리부분 초기화
-			console.log("score1::" + score);
-			GameOver(score);
-			console.log("score3::" + score);
-//			ShowModal("Game over. Congratulations! Your score is: " + score);
 
-			BlackPickPoint=[null];
-			BlackCnt=0;
-			RestartGame();
+	for (var i = 0; i < BlackCnt; i++) {
+		// if ((BlackPickPoint[i] == null) || (newhead.row!=BlackPickPoint[i].row) || 
+		// (newhead.col!=BlackPickPoint[i].col) || (newhead.side!=BlackPickPoint[i].side))	{		}
+		// else {
+		// 	GameOver();
+		// }
+		var crtPoint = BlackPickPoint[i];
+		if ((crtPoint.row==newhead.row) && (crtPoint.col==newhead.col) && 
+			(crtPoint.side==newhead.side))
+		{
+			GameOver();
 		}
-		
 	}
 
 	
 	//////////////////////////
 
-	points.splice(0,0,newhead);
-	drawPart(newhead, Snake);
-
-
 	if (Redpickpoint == null)
 	{
 		Redpickpoint=randomGenerate();
-		while (insideSnakeandRedPoint() == true)
+		while (insideSnakeandRedPoint() == true)//뱀의 경로에 소환되면
 		{
-			Redpickpoint=randomGenerate();
+			Redpickpoint=randomGenerate();//벗어날때까지 재배치
 		}
 		drawPart(Redpickpoint, RedPoint);
+
 	}
-	// if (HalfPickpoint == null)
-	// {
-	// 	HalfPickpoint=randomGenerate();
-	// 	while (insideSnakeandHalfPoint() == true)
-	// 	{
-	// 		HalfPickpoint=randomGenerate();
-	// 	}
-	// 	drawPart(HalfPickpoint, HalfPoint);
-	// }
+	
 	if(score > HalfCnt && HalfPickpoint == null){
 		HalfCnt += 3;
 
@@ -1037,24 +959,14 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		BlackStandardScore += 2;
 
 		BlackPickPoint[BlackCnt] = randomGenerate();
-		//BlackPickPoint.push(randomGenerate());
-		console.log(BlackPickPoint);
-		// while (insideSnakeandBlackPoint() == true)
-		// {
-		// 	BlackPickPoint[BlackCnt]=randomGenerate();
-		// }
+		while (insideSnakeandBlackPoint() == true)
+		{
+			BlackPickPoint[BlackCnt]=randomGenerate();
+		}
 		drawPart(BlackPickPoint[BlackCnt], BlackPoint);
 		BlackCnt++;
 	}
-	// if (SlowPickPoint == null)
-	// {
-	// 	SlowPickPoint=randomGenerate();
-	// 	while (insideSnakeandSlowPoint() == true)
-	// 	{
-	// 		SlowPickPoint=randomGenerate();
-	// 	}
-	// 	drawPart(SlowPickPoint, SlowPoint);
-	// }
+	
 	if(score > SlowCnt && SlowPickPoint == null){
 		SlowCnt += 2;
 
@@ -1075,126 +987,14 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		if ((crtPoint.row==newhead.row) && (crtPoint.col==newhead.col) && 
 			(crtPoint.side==newhead.side))
 		{
-			// fail
-			//alert("Game over. Congratulations! Your score is: "+score);
-			GameOver(score);
+			GameOver();
 		}
 	}
 
 	//drawTable();
 }
-function GameOver(score){
-      clearInterval(timerId);
-
-      var HighScore;
-      HighScore = localStorage.getItem('HighScore');
-
-      if(parseInt(HighScore) < Score){
-        HighScore = Score;
-      }
-      localStorage.setItem("HighScore", HighScore);
-      
-      ctx.beginPath();
-      ctx.rect(0, canvas.height * 0.3, 720, 500);
-      ctx.fillStyle = "rgba(0,0,0,0.8)";
-      ctx.fill();
-
-      ctx.font = 'bold 100px Arial';
-      ctx.fillStyle = 'white';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText("Retry?", 360 , 500);
-      /////////////////////////////////////////
-      var YesBtn = new Path2D();
-      var NoBtn = new Path2D();
-
-      YesBtn.rect(20, 600, 330, 200);
-      ctx.fillStyle = "#3f5a9d";
-      ctx.fill(YesBtn);
-
-      NoBtn.rect(370, 600, 330, 200);
-      ctx.fillStyle = "#3f5a9d";
-      ctx.fill(NoBtn);
-
-      ctx.font = 'bold 100px Arial';
-      ctx.fillStyle = 'white';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText("Yes", 185 , 700);
-
-      ctx.font = 'bold 100px Arial';
-      ctx.fillStyle = 'white';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText("No", 535 , 700);
-      ////////////////////////////////////////////
-      canvas.onclick = function(e){
-        MouseX = e.offsetX;
-        MouseY = e.offsetY;
-
-        if(ctx.isPointInPath(YesBtn, MouseX, MouseY)){
-          Game_Start();
-          Game_Scene = setInterval(timerId, 10);
-        }
-        if(ctx.isPointInPath(NoBtn, MouseX, MouseY)){
-          GameStatus = 0;
-          Game_Scene = setInterval(timerId, 10);
-        }
-      }
-    }
-// function GameOver(Endscore){
-// 	console.log("EndScore::" + Endscore);
-// 	ShowModal("Game over. Congratulations! Your score is: ", Endscore);
-	
-// 	RestartGame();
-// }
-// function ShowModal(text, score)
-// {
-// 	ismodal = true;
-// 	var modal = document.querySelector(".modal");
-// 	document.getElementById("modaltext").innerHTML=text;
-// 	modal.style.display="block";
-// 	modal.focus();
-// }
-// function CloseModal()
-// {
-// 	document.querySelector(".modal").style.display="none";
-// 	ismodal = false;
 
 
-
-function RestartGame()
-{
-	clearInterval(timerId);
-
-	points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
-			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
-
-
-	Redpickpoint = null;
-	BlackPickPoint = [null];
-	BlackCnt = 0;
-	BlackStandardScore = 4;
-	HalfPickpoint = null;
-	SlowPickPoint = null;
-
-	direction=[GO_UP];
-	score=0;
-
-	$("#pausebtn")[0].disabled=true;
-	//obj.value="Start";
-	$("#startbtn")[0].value="Start";
-	$("#optionsbtn")[0].disabled=false;
-	gameStarted=false;
-
-	clearArrays();
-	drawTable();
-	drawSnake();
-}
-
-//StartGame();
 
 function insideSnakeandRedPoint()
 {
@@ -1209,6 +1009,18 @@ function insideSnakeandRedPoint()
 			break;
 		}
 	}
+	for (i=0; i<BlackCnt; i++)
+	{
+		var crtPoint = BlackPickPoint[i];
+		console.log(BlackPickPoint[i]);
+		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
+			(crtPoint.side==Redpickpoint.side))
+		{
+			ret=true;
+			break;
+		}
+	}
+
 	return ret;
 }
 function insideSnakeandSlowPoint()
@@ -1224,6 +1036,16 @@ function insideSnakeandSlowPoint()
 			break;
 		}
 	}
+	for (i=0; i<BlackCnt; i++)
+	{
+		var crtPoint = BlackPickPoint[i];
+		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
+			(crtPoint.side==Redpickpoint.side))
+		{
+			ret=true;
+			break;
+		}
+	}
 	return ret;
 }
 function insideSnakeandHalfPoint()
@@ -1234,6 +1056,16 @@ function insideSnakeandHalfPoint()
 		var crtPoint = points[i];
 		if ((crtPoint.row==HalfPickpoint.row) && (crtPoint.col==HalfPickpoint.col) && 
 			(crtPoint.side==HalfPickpoint.side))
+		{
+			ret=true;
+			break;
+		}
+	}
+	for (i=0; i<BlackCnt; i++)
+	{
+		var crtPoint = BlackPickPoint[i];
+		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
+			(crtPoint.side==Redpickpoint.side))
 		{
 			ret=true;
 			break;
@@ -1264,30 +1096,9 @@ function randomGenerate()
 	for(;randside == points[0].side;){
 		var randside = parseInt((Math.random()*10)%5)+1;
 	}
-	// switch(randside){
-	// 	case 1:
-	// 	console.log("randside : top");
-	// 	break;
+	
 
-	// 	case 2:
-	// 	console.log("randside : front");
-	// 	break;
-
-	// 	case 3:
-	// 	console.log("randside : bottom");
-	// 	break;
-
-	// 	case 4:
-	// 	console.log("randside : left");
-	// 	break;
-
-	// 	case 5:
-	// 	console.log("randside : right");
-	// 	break;
-	// }
-	//console.log("randrow : " + randrow);
-	//console.log("randcol : " + randcol);
-	return {row:randrow, col:randcol, side:randside};
+	return {col:randcol, row:randrow, side:randside};
 }
 
 function intersection(x1,y1,x2,y2,x3,y3,x4,y4)
@@ -1310,71 +1121,4 @@ function intersection(x1,y1,x2,y2,x3,y3,x4,y4)
 		yr=(y2-y1)*(xr-x1)/(x2-x1)+y1;
 	}
 	return {xint:xr,yint:yr};
-}
-
-function pauseclick()
-{
-	if (gameStarted==false)
-	{
-		return;
-	}
-	//alert(x);
-	var pausebtn = $("#pausebtn")[0];
-	if (pausebtn.value=="Pause")
-	{
-		gamePaused=true;
-		clearInterval(timerId);
-		pausebtn.value="Resume";
-		ctx.font="14px normal";
-		ctx.strokeText("Paused", c.width/2 - len/2, tableY - 43);
-	}
-	else if (pausebtn.value=="Resume")
-	{
-		gamePaused=false;
-		//StartGame();
-		timerId = setInterval(callbackfn, speed);
-		pausebtn.value="Pause";
-		ctx.clearRect(c.width/2 - len/2, tableY - 42, c.width/2 - len/2 + 30, (c.height-len)/2 - 82 );
-	}
-}
-
-function startclick(obj)
-{
-	if (obj.value=="Start")
-	{
-		StartGame();
-	}
-	else if (obj.value=="Restart")
-	{
-		RestartGame();
-
-		if (gamePaused==true)
-		{
-			$("#pausebtn")[0].value="Pause";
-			ctx.clearRect(c.width/2 - len/2, tableY - 42, c.width/2 - len/2 + 30, (c.height-len)/2 - 82 );
-			gamePaused=false;
-		}
-	}
-}
-
-function optionsclick()
-{
-	var rows = prompt("Enter number of columns: ", rowcount);
-	var isnumber = parseInt(rows)||0;
-	//alert(isnumber);
-	if (isnumber != 0)
-	{
-		//alert("is integer");
-		rowcount = parseInt(rows);
-		points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
-		{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
-		{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
-
-		clearArrays();
-		drawTable();
-		drawSnake();
-
-		RestartGame();
-	}
 }
