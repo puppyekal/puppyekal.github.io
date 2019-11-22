@@ -50,16 +50,21 @@ function pauseclick()
 	{
 		gamePaused=true;
 		clearInterval(timerId);
+		clearInterval(drawSlow);
+		clearInterval(drawHalf);
+
 		pausebtn.value="Resume";
 		ctx.font="15px normal";
 		ctx.strokeText("Paused", c.width/2 - len/2, tableY - 43);
-		console.log(c.width/2 - len/2, tableY - 43);
 	}
 	else if (pausebtn.value=="Resume")
 	{
 		gamePaused=false;
 		//StartGame();
 		timerId = setInterval(callbackfn, speed);
+		drawSlow = setInterval(drawSlowPoint, 10000);
+		drawHalf = setInterval(drawHalfPoint, 10000);
+
 		pausebtn.value="Pause";
 		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 30, tableY - 33);
 	}
@@ -69,6 +74,8 @@ function pauseclick()
 function RestartGame()
 {
 	clearInterval(timerId);
+	clearInterval(drawSlow);
+	clearInterval(drawHalf);
 
 	points = [{row:rowcount-4, col:parseInt(rowcount/2), side:SIDE_BOTTOM},
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
@@ -82,12 +89,17 @@ function RestartGame()
 	gameStarted=false;
 	gamePaused=false;
 	skipnext=false;
+	gameOver = false;
 
-	StandardScore = 2;
+	
+	drawSlowInterval = 1000;
+	drawHalfInterval = 1000;
+	StandardScore = 1;
+	standartHalf = 14;
 	BlackCnt = 0;
 	BlackStandardScore = 0;	
 	SlowCnt = 2;
-	HalfCnt = 3;
+	HalfCnt = 1;
 	direction=[GO_UP];
 	score=0;
 
