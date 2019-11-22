@@ -5,7 +5,7 @@ var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
 var len=500, rowcount=9;
 var tableX=40, tableY;
 var Snake=0, Line = 1, RedPoint=2, HalfPoint=3, SlowPoint=4, BlackPoint=5;
-var BlackCnt = 0, BlackStandardScore = 0;
+var BlackCnt = 0, BlackStandardScore = 20;
 var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 var timerId, speed;
 var MaximumSpeed = 95;
@@ -653,9 +653,9 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				//0.6->6.0
 				//0.7->7.0
 				//0.8->8.0		
-				newcol = newrow;
+				newcol = head.row;
 				newrow = 0;
-				direction[0]=GO_DOWN;	
+				direction.push(GO_DOWN);
 
 				newside=SIDE_LEFT;
 				//dir=GO_DOWN;
@@ -673,7 +673,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				changeSide = newrow;
 				newrow = rowcount-1;
 				newcol = newrow - changeSide;
-				direction[0]=GO_UP;
+				direction.push(GO_UP);
 				//dir = GO_UP;
 
 				newside = SIDE_LEFT;
@@ -717,8 +717,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 				newrow = newcol;
 				newcol = 0;
-				direction[0]=GO_RIGHT;
-				//dir = GO_UP;
+				direction.push(GO_RIGHT);
 
 				newside = SIDE_TOP;
 			}
@@ -733,8 +732,8 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				//7.0->8.1
 				//8.0->8.0	
 				newrow = (rowcount-1) - newcol;
-				newcol = 8;
-				direction[0]=GO_LEFT;
+				newcol = rowcount-1;
+				direction.push(GO_LEFT);
 				//dir = GO_UP;
 
 				newside = SIDE_TOP;
@@ -780,7 +779,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				newrow = 0;
 
 				newside = SIDE_RIGHT;
-				direction[0]=GO_DOWN;
+				direction.push(GO_DOWN);
 			}
 			else if(head.side==SIDE_BOTTOM){
 				//8.0->0.8
@@ -793,10 +792,10 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				//8.7->7.8
 				//8.8->8.8
 				newcol=newrow;
-				newrow = 8;
+				newrow = rowcount-1;
 
 				newside = SIDE_RIGHT;
-				direction[0]=GO_UP;
+				direction.push(GO_UP);
 			}
 		}
 		
@@ -840,7 +839,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				newcol = 0;
 
 				newside = SIDE_BOTTOM;
-				direction[0]=GO_RIGHT;
+				direction.push(GO_RIGHT);
 			}
 			else if(head.side==SIDE_RIGHT){
 				//0.8->8.0
@@ -853,10 +852,10 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 				//7.8->8.7
 				//8.8->8.8
 				newrow=newcol;
-				newcol = 8;
+				newcol = rowcount-1;
 
 				newside = SIDE_BOTTOM;
-				direction[0]=GO_LEFT;
+				direction.push(GO_LEFT);
 			}
 		}
 		newhead={col:newcol, row:newrow, side:newside};
@@ -933,12 +932,13 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 	if (Redpickpoint == null)
 	{
-		Redpickpoint=randomGenerate();
+		Redpickpoint = randomGenerate();
 		while (insideSnakeandRedPoint() == true)//뱀의 경로에 소환되면
 		{
 			Redpickpoint=randomGenerate();//벗어날때까지 재배치
 		}
-		drawPart(Redpickpoint, RedPoint);
+		//drawPart(Redpickpoint, RedPoint);
+		drawRedPoint();
 
 	}
 	
@@ -950,7 +950,8 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		{
 			HalfPickpoint=randomGenerate();
 		}
-		drawPart(HalfPickpoint, HalfPoint);
+		//drawPart(HalfPickpoint, HalfPoint);
+		drawHalfPoint();
 	}
 
 
@@ -975,7 +976,8 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		{
 			SlowPickPoint=randomGenerate();
 		}
-		drawPart(SlowPickPoint, SlowPoint);
+		//drawPart(SlowPickPoint, SlowPoint);
+		drawSlowPoint();
 	}
 
 
@@ -998,12 +1000,14 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 function insideSnakeandRedPoint()
 {
+	console.log(1);
 	var ret = false;
+
+	
 	for (i=0; i<points.length; i++)
 	{
 		var crtPoint = points[i];
-		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
-			(crtPoint.side==Redpickpoint.side))
+		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && (crtPoint.side==Redpickpoint.side))
 		{
 			ret=true;
 			break;
@@ -1012,13 +1016,19 @@ function insideSnakeandRedPoint()
 	for (i=0; i<BlackCnt; i++)
 	{
 		var crtPoint = BlackPickPoint[i];
-		console.log(BlackPickPoint[i]);
-		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
-			(crtPoint.side==Redpickpoint.side))
+		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && (crtPoint.side==Redpickpoint.side))
 		{
 			ret=true;
 			break;
 		}
+	}
+	if ((SlowPickPoint != null) && (SlowPickPoint.row==Redpickpoint.row) && (SlowPickPoint.col==Redpickpoint.col) && (SlowPickPoint.side==Redpickpoint.side))
+	{
+		ret=true;
+	}
+	if ((HalfPickpoint != null) &&(HalfPickpoint.row==Redpickpoint.row) && (HalfPickpoint.col==Redpickpoint.col) && (HalfPickpoint.side==Redpickpoint.side))
+	{
+		ret=true;
 	}
 
 	return ret;
@@ -1039,12 +1049,20 @@ function insideSnakeandSlowPoint()
 	for (i=0; i<BlackCnt; i++)
 	{
 		var crtPoint = BlackPickPoint[i];
-		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
-			(crtPoint.side==Redpickpoint.side))
+		if ((crtPoint.row==SlowPickPoint.row) && (crtPoint.col==SlowPickPoint.col) && 
+			(crtPoint.side==SlowPickPoint.side))
 		{
 			ret=true;
 			break;
 		}
+	}
+	if ((Redpickpoint.row==SlowPickPoint.row) && (Redpickpoint.col==SlowPickPoint.col) && (Redpickpoint.side==SlowPickPoint.side))
+	{
+		ret=true;
+	}
+	if ((HalfPickpoint != null)&&(HalfPickpoint.row==SlowPickPoint.row) && (HalfPickpoint.col==SlowPickPoint.col) && (HalfPickpoint.side==SlowPickPoint.side))
+	{
+		ret=true;
 	}
 	return ret;
 }
@@ -1064,12 +1082,20 @@ function insideSnakeandHalfPoint()
 	for (i=0; i<BlackCnt; i++)
 	{
 		var crtPoint = BlackPickPoint[i];
-		if ((crtPoint.row==Redpickpoint.row) && (crtPoint.col==Redpickpoint.col) && 
-			(crtPoint.side==Redpickpoint.side))
+		if ((crtPoint.row==HalfPickpoint.row) && (crtPoint.col==HalfPickpoint.col) && 
+			(crtPoint.side==HalfPickpoint.side))
 		{
 			ret=true;
 			break;
 		}
+	}
+	if ((SlowPickPoint.row==HalfPickpoint.row) && (SlowPickPoint.col==HalfPickpoint.col) && (SlowPickPoint.side==HalfPickpoint.side))
+	{
+		ret=true;
+	}
+	if ((Redpickpoint.row==HalfPickpoint.row) && (Redpickpoint.col==HalfPickpoint.col) && (Redpickpoint.side==HalfPickpoint.side))
+	{
+		ret=true;
 	}
 	return ret;
 }
@@ -1086,8 +1112,31 @@ function insideSnakeandBlackPoint()
 			break;
 		}
 	}
+	if ((SlowPickPoint != null) && (SlowPickPoint.row==BlackPickPoint.row) && (SlowPickPoint.col==BlackPickPoint.col) && (SlowPickPoint.side==BlackPickPoint.side))
+	{
+		ret=true;
+	}
+	if ((HalfPickpoint) && (HalfPickpoint.row==BlackPickPoint.row) && (HalfPickpoint.col==BlackPickPoint.col) && (HalfPickpoint.side==BlackPickPoint.side))
+	{
+		ret=true;
+	}
+	if ((Redpickpoint.row==BlackPickPoint.row) && (Redpickpoint.col==BlackPickPoint.col) && (Redpickpoint.side==BlackPickPoint.side))
+	{
+		ret=true;
+	}
 	return ret;
 }
+
+function drawRedPoint(){
+	drawPart(Redpickpoint, RedPoint);
+}
+function drawSlowPoint(){
+	drawPart(SlowPickPoint, SlowPoint);
+}
+function drawHalfPoint(){
+	drawPart(HalfPickpoint, HalfPoint);
+}
+
 function randomGenerate()
 {
 	var randrow=parseInt((Math.random()*100)%rowcount);
@@ -1095,8 +1144,7 @@ function randomGenerate()
 	var randside = parseInt((Math.random()*10)%5)+1;
 	for(;randside == points[0].side;){
 		var randside = parseInt((Math.random()*10)%5)+1;
-	}
-	
+	} 
 
 	return {col:randcol, row:randrow, side:randside};
 }
