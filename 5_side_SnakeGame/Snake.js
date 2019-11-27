@@ -5,6 +5,7 @@ var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
 var len=500, rowcount=9;
 var tableX=40, tableY;
 var Snake=0, Line = 1, RedPoint=2, HalfPoint=3, SlowPoint=4, BlackPoint=5;
+
 var BlackCnt = 0, BlackStandardScore = 5;
 var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 var timerId, speed, drawHalf, drawSlow;
@@ -596,10 +597,25 @@ function Interval(){
 	clearInterval(drawSlow);
 	clearInterval(drawHalf);
 
+	drawHalf = setInterval(drawHalfPoint, drawHalfInterval);
+	drawSlow = setInterval(drawSlowPoint, drawSlowInterval);
+	timerId = setInterval(callbackfn, speed);
+}//change Snake's speed
+
+function SlowInterval(){
+	clearInterval(timerId);
+	clearInterval(drawSlow);
+
 	timerId = setInterval(callbackfn, speed);
 	drawSlow = setInterval(drawSlowPoint, drawSlowInterval);
-	drawHalf = setInterval(drawHalfPoint, drawHalfInterval);
+}//change Snake's speed
 
+function HalfInterval(){
+	clearInterval(timerId);
+	clearInterval(drawHalf)
+
+	timerId = setInterval(callbackfn, speed);
+	drawHalf = setInterval(drawHalfPoint, drawHalfInterval);
 }//change Snake's speed
 
 function callbackfn()//계속 호출될거임+방향키 누를떄마다
@@ -921,9 +937,9 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		for (var i = 0; i < halfLen; i++) {
 			var tail=points.pop();
 			drawPart(tail, Line);
-			drawHalfInterval = 1000;
-			Interval();
 		}
+		drawHalfInterval = 1000;
+		HalfInterval();
 	}
 	//////////////////////////
 	
@@ -937,7 +953,7 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		SlowPickPoint=null;
 		speed = 200;
 		drawSlowInterval = 1000;
-		Interval();//change Snake's speed
+		SlowInterval();//change Snake's speed
 	}
 
 	for (var i = 0; i < BlackCnt; i++) {
@@ -1156,7 +1172,7 @@ function drawRedPoint(){
 function drawSlowPoint(){
 	if(speed <= 140){
 		drawSlowInterval = 10000;
-		Interval();
+		SlowInterval();
 		if(SlowPickPoint != null){
 			drawPart(SlowPickPoint,Line);
 		}
@@ -1171,11 +1187,11 @@ function drawSlowPoint(){
 function drawHalfPoint(){
 	if(points.length > standartHalf){
 		drawHalfInterval = 10000;
-		Interval();
+		HalfInterval();
 		if(HalfPickpoint != null){
 			drawPart(HalfPickpoint,Line);
 		}
-		HalfPickpoint=randomGenerate();
+		HalfPickpoint = randomGenerate();
 		while (OverlapHalfPoint() == true)
 		{
 			HalfPickpoint=randomGenerate();

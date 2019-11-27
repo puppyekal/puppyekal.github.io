@@ -97,7 +97,7 @@ function RestartGame()
 	StandardScore = 1;
 	standartHalf = 14;
 	BlackCnt = 0;
-	BlackStandardScore = 0;	
+	BlackStandardScore = 5;	
 	SlowCnt = 2;
 	HalfCnt = 1;
 	direction=[GO_UP];
