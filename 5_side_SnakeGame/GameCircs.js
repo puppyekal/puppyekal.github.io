@@ -17,9 +17,15 @@ function startclick(obj)
 	}
 }
 
-function optionsclick()
+function ResetScore(){
+	console.log(111);
+	localStorage.clear();
+	eraseScore();
+	drawScore();
+}
+
+function optionsclick(rows)
 {
-	var rows = prompt("Enter number of columns: ", rowcount);
 	var isnumber = parseInt(rows)||0;
 	//alert(isnumber);
 	if (isnumber != 0)
@@ -66,7 +72,7 @@ function pauseclick()
 		drawHalf = setInterval(drawHalfPoint, 10000);
 
 		pausebtn.value="Pause";
-		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 30, tableY - 33);
+		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 30, tableY - 53);
 	}
 }
 
@@ -108,6 +114,7 @@ function RestartGame()
 	//obj.value="Start";
 	$("#startbtn")[0].value="Start";
 	$("#optionsbtn")[0].disabled=false;
+	$("#ResetScoreBtn")[0].disabled=false;
 	gameStarted=false;
 
 	clearArrays();
