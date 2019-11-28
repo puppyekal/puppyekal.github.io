@@ -56,10 +56,10 @@ html {
 
 .gameleft {
 
-	float: left;
+  float: left;
   position: relative;
-	width: 25em;
-  padding-left: 3em;
+  width:50rem; 
+  padding-bottom: 2em;
 
 }
 .howgameright {
@@ -9636,6 +9636,9 @@ hr.light {
 }
 .page-section-game {
   padding: 4rem 0;
+}
+.page-section-gamescreen{
+  padding: 1rem 0;
 }
 
 #mainNav {

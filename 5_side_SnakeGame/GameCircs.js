@@ -17,9 +17,8 @@ function startclick(obj)
 	}
 }
 
-function optionsclick()
+function optionsclick(rows)
 {
-	var rows = prompt("Enter number of columns: ", rowcount);
 	var isnumber = parseInt(rows)||0;
 	//alert(isnumber);
 	if (isnumber != 0)
