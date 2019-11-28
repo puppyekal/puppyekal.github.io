@@ -11,7 +11,7 @@
   <title>5 Side Snake</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <meta name="keywords" content="HTML,JavaScript,games,snake,browser,online,free,HTML5">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- <link rel="stylesheet" type="text/css" href="../5_side_SnakeGame/style.css"> -->
 
 
   <!-- Font Awesome Icons -->
@@ -27,6 +27,9 @@
 
   <!-- Theme CSS - Includes Bootstrap -->
   <link href="css/creative.min.css" rel="stylesheet">
+
+
+
 
 </head>
 
@@ -85,36 +88,54 @@
 
 
   <!--SnakeGame-->
-  <section class="page-section-game " id="snakegame">
-    <script src="../5_side_SnakeGame/modal.js"></script>
-    <script src="../5_side_SnakeGame/snake.js"></script>
+  <section class=".page-section-gamescreen " id="snakegame">
+    <script src="../5_side_SnakeGame/GameCircs.js"></script>
+    <script src="../5_side_SnakeGame/Snake.js"></script>
 
     <div class="container">
       <div class="row ">
         <!--GameScreen-->
-        <div class="gameleft" style="border: rgb(36, 36, 36) solid 2px;" height="1000" width="500">
-            
+        <div class="gameleft" style="border: rgb(36, 36, 36) solid 2px; ">
           <!--게임이 뿌려지는 부분-->
-          <canvas id="myCanvas" height="400" width="500" ></canvas>
+          <br>
+          <canvas id="myCanvas" style="padding-left: 2em;" width="640" height="640"></canvas>
 
           <!--game button-->
-          <div class="game button">
-            <div style="display: inline-block; width:36px; text-align:center"></div>
-            <input type="button" onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
-            <input type="button" onclick="startclick(this);" value="Start" id="startbtn">
-            <select id="difficulty">
-              <option value="easy">Easy</option>
-              <option value="moderate" selected>Moderate</option>
-              <option value="hard">Hard</option>
-            </select>
+          <div class=gamebutton style="text-align: center">
+            <input type="button" class="btn btn-outline-warning btn-lg" style="margin-right : 1em" onclick="startclick(this);" value="Start" id="startbtn">
+            
+            <input type="button" class="btn btn-outline-secondary btn-lg"  onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
+            
             <div style="display: inline-block; width:50px;"></div>
-            <input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"><br><br><br>
-          </div>
+            <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" value="Options" id="optionsbtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Option
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" onclick="optionsclick(5)"> 5 </a>
+                <a class="dropdown-item" onclick="optionsclick(6)"> 6 </a>
+                <a class="dropdown-item" onclick="optionsclick(7)"> 7 </a>
+                <a class="dropdown-item" onclick="optionsclick(8)"> 8 </a>
+                <a class="dropdown-item" onclick="optionsclick(9)"> 9 </a>
+                <a class="dropdown-item" onclick="optionsclick(10)"> 10 </a>
+                <a class="dropdown-item" onclick="optionsclick(11)"> 11 </a>
+                <a class="dropdown-item" onclick="optionsclick(12)"> 12 </a>
+                <a class="dropdown-item" onclick="optionsclick(13)"> 13 </a>
+                <a class="dropdown-item" onclick="optionsclick(14)"> 14 </a>
+                <a class="dropdown-item" onclick="optionsclick(15)"> 15 </a>
+                
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" onclick="optionsclick(50)"> 50 </a>
+              </div>
+            </div>
+             <!-- <input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"> -->
+
+           </div>
         </div>
-      
+
         <!--HowtoPlay-->
         <div class="howgameright">
-            
+
           <div class="card- card" style="width: 18rem;">
             <div class="card-body">
               <h5 class="card-title">How to play</h5>
@@ -128,11 +149,11 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-    
-  </section>
+    </div>
+    </div>
 
+  </section>
+  <br><br>
 
   <!-- Footer -->
   <footer class="bg-light py-5">
