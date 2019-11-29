@@ -72,7 +72,7 @@ function pauseclick()
 		drawHalf = setInterval(drawHalfPoint, 10000);
 
 		pausebtn.value="Pause";
-		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 30, tableY - 53);
+		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2, tableY - 33);
 	}
 }
 
