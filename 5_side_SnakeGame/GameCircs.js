@@ -72,7 +72,7 @@ function pauseclick()
 		drawHalf = setInterval(drawHalfPoint, 10000);
 
 		pausebtn.value="Pause";
-		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 30, tableY - 53);
+		ctx.clearRect(c.width/2 - len/2, tableY - 73, c.width/2 - len/2 + 55, tableY - 43);
 	}
 }
 
@@ -87,6 +87,7 @@ function RestartGame()
 			{row:rowcount-3, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-2, col:parseInt(rowcount/2), side:SIDE_BOTTOM}, 
 			{row:rowcount-1, col:parseInt(rowcount/2), side:SIDE_BOTTOM}];
+
 
 	Redpickpoint = null;
 	BlackPickPoint = [null];
