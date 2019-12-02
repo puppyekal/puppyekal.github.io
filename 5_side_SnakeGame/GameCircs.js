@@ -60,7 +60,7 @@ function pauseclick()
 		clearInterval(drawHalf);
 
 		pausebtn.value="Resume";
-		ctx.font="15px normal";
+		ctx.font="20px normal";
 		ctx.strokeText("Paused", c.width/2 - len/2, tableY - 43);
 	}
 	else if (pausebtn.value=="Resume")

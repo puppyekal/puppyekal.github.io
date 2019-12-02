@@ -45,7 +45,6 @@ var SlowPickPoint = null;
 var gameStarted=false;
 var gamePaused=false;
 var gameOver = false;
-var ResetScore = false;
 
 var skipnext=false;
 
@@ -149,7 +148,7 @@ function drawTable()
 	ctx.clearRect(0,0,c.width,c.height);
 
 	var x = (c.width-len)/2; //(c.width-len)/2;
-	var y = (c.height-len)/2+40;
+	var y = (c.height-len)/2+tableX;
 	tableY=y;
 
 	ctx.fillStyle=backgroundcolor;
@@ -473,7 +472,7 @@ function drawPart(part, erase)
 		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == HalfPoint){
-		ctx.fillStyle="rgb(33,197,255)";
+		ctx.fillStyle="rgb(56,107,196)";
 		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == SlowPoint){
@@ -508,19 +507,19 @@ function drawSnake()
 
 function drawScore()
 {
-	ctx.font="15px normal";
+	ctx.font="17px normal";
 	ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
 	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 20);
 	if(localStorage.getItem("HighScore") == null){
-		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 230, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 220, tableY - 20);
 	}
 	else if(localStorage.getItem("HighScore") == "null"){
-	    localStorage.setItem('HighScore', 0);     
-	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
+	    localStorage.setItem('HighScore', score);     
+	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 220, tableY - 20);
 	}
 	else{
-		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 220, tableY - 20);
 	}
 }
 
@@ -561,23 +560,24 @@ function GameOver(){
 	gameStarted=false;
     
     ctx.beginPath();
-    ctx.rect((c.width-len)/2,(c.height-len)/2, 500, 500);
+    ctx.rect((c.width-len)/2,(c.height-len)/2 + tableX, len, len);
     ctx.fillStyle = "rgba(0,0,0,0.8)";
     ctx.fill();
 
-    ctx.font = 'bold 50px Arial';
+    ctx.font = 'bold 80px Arial';
     ctx.fillStyle = 'white';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText("Game Over", (c.width-len)/2 + 250, 150);
-    ctx.fillText("Your Score : " + score, (c.width-len)/2 + 250, 250);
-    ctx.fillText("High Score : " + localStorage.getItem('HighScore'), (c.width-len)/2 + 250, 350);
+    ctx.fillText("GAME OVER", c.width/2, 250);
+    ctx.font = 'bold 65px Arial';
+    ctx.fillText("Your Score : " + score, c.width/2, 400);
+    ctx.fillText("High Score : " + localStorage.getItem('HighScore'), c.width/2, 510);
 
 
     score = 0;
     /////////////////////////////////////////
 
-    okBtn.rect(c.width / 2 - 100, 400, 200, 100);
+    okBtn.rect(c.width / 2 - 100, 600, 200, 100);
     ctx.fillStyle = "#3f5a9d";
     ctx.fill(okBtn); 
 
@@ -585,7 +585,7 @@ function GameOver(){
     ctx.fillStyle = 'white';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText("OK", c.width/2, 450);
+    ctx.fillText("OK", c.width/2, 650);
     window.addEventListener("keydown", function(e){
     	if(e.keyCode == 13 && gameOver == true){
 			RestartGame();
