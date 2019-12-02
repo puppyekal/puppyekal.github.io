@@ -2,7 +2,7 @@ var c, ctx;
 var score=0;
 var GO_LEFT=1, GO_RIGHT=2, GO_UP=3, GO_DOWN=4;
 var SIDE_TOP=1, SIDE_FRONT=2, SIDE_BOTTOM=3, SIDE_LEFT = 4, SIDE_RIGHT = 5;
-var len=500, rowcount=9;
+var len=700, rowcount=9;
 var tableX=40, tableY;
 var Snake=0, Line = 1, RedPoint=2, HalfPoint=3, SlowPoint=4, BlackPoint=5;
 
@@ -149,7 +149,7 @@ function drawTable()
 	ctx.clearRect(0,0,c.width,c.height);
 
 	var x = (c.width-len)/2; //(c.width-len)/2;
-	var y = (c.height-len)/2;
+	var y = (c.height-len)/2+40;
 	tableY=y;
 
 	ctx.fillStyle=backgroundcolor;
@@ -513,20 +513,20 @@ function drawScore()
     ctx.textAlign = 'left';
 	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 20);
 	if(localStorage.getItem("HighScore") == null){
-		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 130, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 230, tableY - 20);
 	}
 	else if(localStorage.getItem("HighScore") == "null"){
 	    localStorage.setItem('HighScore', 0);     
-	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 130, tableY - 20);
+	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
 	}
 	else{
-		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 130, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
 	}
 }
 
 function eraseScore()
 {
-	ctx.clearRect(c.width/2 - len/2, tableY - 70,  c.width/2 + 200,  tableY - 10);
+	ctx.clearRect(c.width/2 - len/2, tableY - 100,  c.width/2 + 330,  tableY - 5);
 }
 
 
