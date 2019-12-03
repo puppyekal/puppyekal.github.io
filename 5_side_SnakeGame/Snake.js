@@ -11,7 +11,6 @@ var direction=[GO_UP]; //1-left, 2-right, 3-up, 4-down
 var timerId, speed, drawHalf, drawSlow;
 var drawSlowInterval = 1000, drawHalfInterval = 1000;
 
-var StandardScore = 1;
 var standartHalf = 14;
 var SlowCnt = 2, HalfCnt = 1;
 var mycanvas = document.getElementById('myCanvas');
@@ -45,7 +44,6 @@ var SlowPickPoint = null;
 var gameStarted=false;
 var gamePaused=false;
 var gameOver = false;
-var ResetScore = false;
 
 var skipnext=false;
 
@@ -149,7 +147,7 @@ function drawTable()
 	ctx.clearRect(0,0,c.width,c.height);
 
 	var x = (c.width-len)/2; //(c.width-len)/2;
-	var y = (c.height-len)/2+40;
+	var y = (c.height-len)/2+tableX;
 	tableY=y;
 
 	ctx.fillStyle=backgroundcolor;
@@ -473,7 +471,7 @@ function drawPart(part, erase)
 		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == HalfPoint){
-		ctx.fillStyle="rgb(33,197,255)";
+		ctx.fillStyle="rgb(56,107,196)";
 		ctx.strokeStyle="darkblue";
 	}
 	else if(erase == SlowPoint){
@@ -483,7 +481,6 @@ function drawPart(part, erase)
 	else if(erase == BlackPoint){
 		ctx.fillStyle="rgb(0,0,0)";
 		ctx.strokeStyle="darkblue";
-
 	}
 	else if(erase == Snake) //snake
 	{
@@ -491,7 +488,6 @@ function drawPart(part, erase)
 		ctx.strokeStyle="rgb(124,165,57)";
 	}
 	ctx.fill();
-	//if (erase==1)
 	ctx.stroke();
 	
 
@@ -508,32 +504,70 @@ function drawSnake()
 
 function drawScore()
 {
-	ctx.font="15px normal";
+	ctx.font="17px normal";
 	ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
 	ctx.strokeText("SCORE : " + score, c.width/2 - len/2, tableY - 20);
 	if(localStorage.getItem("HighScore") == null){
-		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 230, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + 0, c.width/2 + 220, tableY - 20);
 	}
 	else if(localStorage.getItem("HighScore") == "null"){
-	    localStorage.setItem('HighScore', 0);     
-	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
+	    localStorage.setItem('HighScore', score);     
+	    ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 220, tableY - 20);
 	}
 	else{
-		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 230, tableY - 20);
+		ctx.strokeText("HIGH SCORE : " + localStorage.getItem("HighScore"), c.width/2 + 220, tableY - 20);
 	}
 }
 
 function eraseScore()
 {
-	ctx.clearRect(c.width/2 - len/2, tableY - 100,  c.width/2 + 330,  tableY - 5);
+	ctx.clearRect(c.width/2 - len/2, tableY - 100,  c.width/2 + 350,  tableY+5);
 }
 
 
 function StartGame()
 {
-	speed = 200;
-	
+	switch(rowcount){
+		case 5:
+		speed = 320;
+		break;
+		case 6:
+		speed = 270;
+		break;
+		case 7:
+		speed = 230;
+		break;
+		case 8:
+		speed = 210;
+		break;
+		case 9:
+		speed = 200;
+		break;
+		case 10:
+		speed = 195;
+		break;
+		case 11:
+		speed = 190;
+		break;
+		case 12:
+		speed = 185;
+		break;
+		case 13:
+		speed = 180;
+		break;
+		case 14:
+		speed = 175;
+		break;
+		case 15:
+		speed = 170;
+		break;
+		case 50:
+		speed = 100;
+		break;
+	}
+	console.log("speed::"+speed);
+
 	var options = $("#optionsbtn")[0];
 	options.disabled=true;
 	$("#pausebtn")[0].disabled=false;
@@ -545,6 +579,7 @@ function StartGame()
 	drawHalf = setInterval(drawHalfPoint, drawHalfInterval);
 	gameStarted=true;
 }
+
 var okBtn = new Path2D();
 
 function GameOver(){
@@ -561,31 +596,36 @@ function GameOver(){
 	gameStarted=false;
     
     ctx.beginPath();
-    ctx.rect((c.width-len)/2,(c.height-len)/2, 500, 500);
+    ctx.rect((c.width-len)/2,(c.height-len)/2 + tableX, len, len);
     ctx.fillStyle = "rgba(0,0,0,0.8)";
     ctx.fill();
 
-    ctx.font = 'bold 50px Arial';
+    ctx.font = 'bold 80px Arial';
     ctx.fillStyle = 'white';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText("Game Over", (c.width-len)/2 + 250, 150);
-    ctx.fillText("Your Score : " + score, (c.width-len)/2 + 250, 250);
-    ctx.fillText("High Score : " + localStorage.getItem('HighScore'), (c.width-len)/2 + 250, 350);
+    ctx.fillText("GAME OVER", c.width/2, 250);
+    ctx.font = 'bold 65px Arial';
+    ctx.fillText("Your Score : " + score, c.width/2, 400);
+    ctx.fillText("High Score : " + localStorage.getItem('HighScore'), c.width/2, 510);
 
 
     score = 0;
     /////////////////////////////////////////
+    var btnWidth = 200;
+    var btnHeight = 100;
 
-    okBtn.rect(c.width / 2 - 100, 400, 200, 100);
+    okBtn.rect(c.width / 2 - btnWidth / 2, c.height*(10/13), btnWidth, btnHeight);
+    console.log(c.width / 2 - btnWidth / 2, c.height*(10/13));
     ctx.fillStyle = "#3f5a9d";
     ctx.fill(okBtn); 
+    console.log(okBtn);
 
 	ctx.font = 'bold 50px Arial';
     ctx.fillStyle = 'white';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText("OK", c.width/2, 450);
+    ctx.fillText("OK", c.width/2, c.height*(10/13)+btnHeight/2);
     window.addEventListener("keydown", function(e){
     	if(e.keyCode == 13 && gameOver == true){
 			RestartGame();
@@ -593,16 +633,56 @@ function GameOver(){
     });
     document.onclick = ClickBtn;
     var btnEvent = document.getElementById("myBtn");
+}
+var offsetX,offsetY;
 
+// a function to recalculate the canvas offsets
+function reOffset(){
+	var canvas = document.getElementById("myCanvas");
+    var BB = canvas.getBoundingClientRect();
+    offsetL=BB.left;
+    offsetT=BB.top;  
+    offsetR=BB.right;
+    offsetB=BB.bottom;
+ //    console.log("111111111111");
+	// console.log(offsetL + offsetR);
+	// console.log(offsetT + offsetB);
+ //    console.log("111111111111");
 }
 
-function ClickBtn(e) {
-	MouseX = e.offsetX;
-	MouseY = e.offsetY;
+// listen for window resizing (and scrolling) events
+//     and then recalculate the canvas offsets
+window.onscroll=function(e){ reOffset(); }
+window.onresize=function(e){ reOffset(); }
 
-	if(ctx.isPointInPath(okBtn, MouseX, MouseY)){
-		RestartGame();
-	}
+function ClickBtn(e) {
+
+	// console.log("===========");
+	// MouseX = e.offsetX;
+	// MouseY = e.offsetY;
+	// console.log(MouseX, MouseY);
+
+	// MouseX = e.pageX;
+	// MouseY = e.pageY;
+	// console.log(MouseX, MouseY);
+
+	// MouseX = e.clientX;
+	// MouseY = e.clientY;
+	// console.log(MouseX, MouseY);
+
+	// MouseX = e.screenX;
+	// MouseY = e.screenY;
+	// console.log(MouseX, MouseY);
+
+
+
+	// mouseX=parseInt(e.clientX-offsetX);
+ //    mouseY=parseInt(e.clientY-offsetY);
+	// console.log(mouseX, mouseY);
+
+	// if(ctx.isPointInPath(okBtn, mouseX, mouseY)){
+	// 	RestartGame();
+	// }
 }
 
 
@@ -625,21 +705,15 @@ function SlowInterval(){
 }//change Snake's speed
 
 function HalfInterval(){
-	clearInterval(timerId);
+	// clearInterval(timerId);
 	clearInterval(drawHalf)
 
-	timerId = setInterval(callbackfn, speed);
+	// timerId = setInterval(callbackfn, speed);
 	drawHalf = setInterval(drawHalfPoint, drawHalfInterval);
 }//change Snake's speed
 
 function callbackfn()//계속 호출될거임+방향키 누를떄마다
 {
-	if(score > StandardScore){
-		speed -= 5;
-		StandardScore += 1;
-		Interval();//change Snake's speed
-	}
-
 	if (skipnext == true)
 	{
 		skipnext = false;
@@ -919,8 +993,12 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 
 	else//닿으면 지워버리고 점수올림
 	{
-		//snake found the brown part
+		//snake found the red part
 		score++;
+
+		speed -= 5;
+		Interval();//change Snake's speed
+
 		Redpickpoint=null;
 		var HighScore;
     	HighScore = localStorage.getItem('HighScore');
@@ -965,7 +1043,44 @@ function callbackfn()//계속 호출될거임+방향키 누를떄마다
 		(newhead.side==SlowPickPoint.side))
 	{
 		SlowPickPoint=null;
-		speed = 200;
+		switch(rowcount){
+			case 5:
+			speed = 320;
+			break;
+			case 6:
+			speed = 270;
+			break;
+			case 7:
+			speed = 230;
+			break;
+			case 8:
+			speed = 210;
+			break;
+			case 9:
+			speed = 200;
+			break;
+			case 10:
+			speed = 195;
+			break;
+			case 11:
+			speed = 190;
+			break;
+			case 12:
+			speed = 185;
+			break;
+			case 13:
+			speed = 175;
+			break;
+			case 14:
+			speed = 170;
+			break;
+			case 15:
+			speed = 165;
+			break;
+			case 50:
+			speed = 100;
+			break;
+		}
 		drawSlowInterval = 1000;
 		SlowInterval();//change Snake's speed
 	}
@@ -1184,7 +1299,46 @@ function drawRedPoint(){
 	drawPart(Redpickpoint, RedPoint);
 }
 function drawSlowPoint(){
-	if(speed <= 140){
+	var standardSpeed;
+	switch(rowcount){
+		case 5:
+		standardSpeed = 270;
+		break;
+		case 6:
+		standardSpeed = 220;
+		break;
+		case 7:
+		standardSpeed = 180;
+		break;
+		case 8:
+		standardSpeed = 170;
+		break;
+		case 9:
+		standardSpeed = 140;
+		break;
+		case 10:
+		standardSpeed = 135;
+		break;
+		case 11:
+		standardSpeed = 130;
+		break;
+		case 12:
+		standardSpeed = 125;
+		break;
+		case 13:
+		standardSpeed = 120;
+		break;
+		case 14:
+		standardSpeed = 115;
+		break;
+		case 15:
+		standardSpeed = 110;
+		break;
+		case 50:
+		standardSpeed = 20;
+		break;
+	}
+	if(speed <= standardSpeed){
 		drawSlowInterval = 10000;
 		SlowInterval();
 		if(SlowPickPoint != null){

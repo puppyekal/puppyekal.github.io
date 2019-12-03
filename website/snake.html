@@ -28,15 +28,16 @@
   <!-- Theme CSS - Includes Bootstrap -->
   <link href="css/creative.min.css" rel="stylesheet">
 
+  <!-- <audio id="music" src="../SWAP/music.mp3" preload loop></audio> -->
 
-
-
+  <script src="../5_side_SnakeGame/GameCircs.js"></script>
+  <script src="../5_side_SnakeGame/Snake.js"></script>
 </head>
 
 <body id="page-top">
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 another-nav" id="mainNav">
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top py-2.7 another-nav" id="mainNav">
     <div class="container">
       <a class="navbar-brand " href="index.html">
         <img src="./img/main_logo.png" alt="Hello Open World!" width="250px"> </a>
@@ -89,26 +90,22 @@
 
   <!--SnakeGame-->
   <section class=".page-section-gamescreen " id="snakegame">
-    <script src="../5_side_SnakeGame/GameCircs.js"></script>
-    <script src="../5_side_SnakeGame/Snake.js"></script>
-
     <div class="container">
       <div class="row ">
         <!--GameScreen-->
-        <div class="gameleft" style="border: rgb(36, 36, 36) solid 2px; ">
-          <!--게임이 뿌려지는 부분-->
+        <div class="col-lg-7 col-md-12 col-sm-12" style="text-align: center " >
           <br>
-          <canvas id="myCanvas" style="padding-left: 2em;" width="640" height="640"></canvas>
-
+          <!-- <canvas id="myCanvas" style="padding-left: 2em;" width="770" height="770"></canvas> -->
+          <canvas class="col-lg-9 col-md-8 col-sm-8" id="myCanvas" width="720" height="780" style="  box-shadow:0 0 15px darkgrey; padding-bottom:1rem ;  margin-top: 3rem;" ></canvas>
           <!--game button-->
-          <div class=gamebutton style="text-align: center">
-            <input type="button" class="btn btn-outline-warning btn-lg" style="margin-right : 1em" onclick="startclick(this);" value="Start" id="startbtn">
+          <div class=gamebutton style="text-align: center ">
+            <input type="button" class="btn btn-outline-warning" style="margin-right : 0.2em" onclick="startclick(this);" value="Start" id="startbtn">
             
-            <input type="button" class="btn btn-outline-secondary btn-lg"  onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
-            
+            <input type="button" class="btn btn-outline-secondary "  onclick="pauseclick();" value="Pause" id="pausebtn" disabled>
+          
             <div style="display: inline-block; width:50px;"></div>
             <div class="btn-group">
-            <button type="button" class="btn btn-danger dropdown-toggle" value="Options" id="optionsbtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-danger dropdown-toggle btn-sm" value="Options" id="optionsbtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Option
               </button>
               <div class="dropdown-menu">
@@ -125,27 +122,20 @@
                 <a class="dropdown-item" onclick="optionsclick(15)"> 15 </a>
                 
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" onclick="optionsclick(50)"> 50 </a>
+                <a class="dropdown-item" onclick="optionsclick(50)"> 오십 </a>
               </div>
             </div>
+            <input type="button" class="btn btn-success btn-sm" onclick="ResetScore()" value="ResetScore" id="ResetScoreBtn">
              <!-- <input type="button" value="Options" id="optionsbtn" onclick="optionsclick()"> -->
 
            </div>
         </div>
 
         <!--HowtoPlay-->
-        <div class="howgameright">
-
-          <div class="card- card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">How to play</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="#" class="card-link">Card link</a>
-              <a href="#" class="card-link">Another link</a>
-            </div>
-          </div>
+        <div class="col-lg-4 col-md-12 col-sm-12">
+          <div class="card- card text-center" style="width: 25rem; margin-top: 5rem;">
+            <a> <img src="../img/SnakeHowtoPlay.png" class="card-img"> </a>
+          
         </div>
       </div>
     </div>
