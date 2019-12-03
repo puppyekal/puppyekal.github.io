@@ -59,7 +59,7 @@ WallTile.prototype = Object.create(Tile);
 // VICTORY TILE
 var VictoryTile = function(x, y){
 	this.init(x, y);
-	this.color = "rgb(203, 255, 117)"; //"rgba(95, 255, 80, 1.0)";	
+	this.color = "rgb(124, 182, 89)"; //"rgba(95, 255, 80, 1.0)";	
 };
 VictoryTile.prototype = Object.create(Tile);
 VictoryTile.prototype.onCollide = function(ai) {
@@ -70,7 +70,7 @@ VictoryTile.prototype.onCollide = function(ai) {
 // LAVA TILE (kills player)
 var LavaTile = function(x, y){
 	this.init(x, y);
-	this.color = "red";
+	this.color = "rgb(251, 0, 0)";
 };
 LavaTile.prototype = Object.create(Tile);
 LavaTile.prototype.onCollide = function(ai) {
