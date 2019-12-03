@@ -580,7 +580,6 @@ function StartGame()
 	gameStarted=true;
 }
 
-var okBtn = new Path2D();
 
 function GameOver(){
 	clearInterval(timerId);
@@ -611,79 +610,19 @@ function GameOver(){
 
 
     score = 0;
-    /////////////////////////////////////////
-    var btnWidth = 200;
-    var btnHeight = 100;
-
-    okBtn.rect(c.width / 2 - btnWidth / 2, c.height*(10/13), btnWidth, btnHeight);
-    console.log(c.width / 2 - btnWidth / 2, c.height*(10/13));
-    ctx.fillStyle = "#3f5a9d";
-    ctx.fill(okBtn); 
-    console.log(okBtn);
-
-	ctx.font = 'bold 50px Arial';
+ 
+	ctx.font = 'bold 80px Arial';
     ctx.fillStyle = 'white';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillText("OK", c.width/2, c.height*(10/13)+btnHeight/2);
+    ctx.fillText("Press Enter Key", c.width/2, c.height*(10/13)+60);
     window.addEventListener("keydown", function(e){
     	if(e.keyCode == 13 && gameOver == true){
 			RestartGame();
 		}
     });
-    document.onclick = ClickBtn;
-    var btnEvent = document.getElementById("myBtn");
-}
-var offsetX,offsetY;
-
-// a function to recalculate the canvas offsets
-function reOffset(){
-	var canvas = document.getElementById("myCanvas");
-    var BB = canvas.getBoundingClientRect();
-    offsetL=BB.left;
-    offsetT=BB.top;  
-    offsetR=BB.right;
-    offsetB=BB.bottom;
- //    console.log("111111111111");
-	// console.log(offsetL + offsetR);
-	// console.log(offsetT + offsetB);
- //    console.log("111111111111");
 }
 
-// listen for window resizing (and scrolling) events
-//     and then recalculate the canvas offsets
-window.onscroll=function(e){ reOffset(); }
-window.onresize=function(e){ reOffset(); }
-
-function ClickBtn(e) {
-
-	// console.log("===========");
-	// MouseX = e.offsetX;
-	// MouseY = e.offsetY;
-	// console.log(MouseX, MouseY);
-
-	// MouseX = e.pageX;
-	// MouseY = e.pageY;
-	// console.log(MouseX, MouseY);
-
-	// MouseX = e.clientX;
-	// MouseY = e.clientY;
-	// console.log(MouseX, MouseY);
-
-	// MouseX = e.screenX;
-	// MouseY = e.screenY;
-	// console.log(MouseX, MouseY);
-
-
-
-	// mouseX=parseInt(e.clientX-offsetX);
- //    mouseY=parseInt(e.clientY-offsetY);
-	// console.log(mouseX, mouseY);
-
-	// if(ctx.isPointInPath(okBtn, mouseX, mouseY)){
-	// 	RestartGame();
-	// }
-}
 
 
 function Interval(){
