@@ -54,6 +54,9 @@ window.addEventListener("keydown", function(e){
 
 window.addEventListener("keydown", function(e)
 {
+	if(e.keyCode == 13 && gameStarted == false){
+		StartGame();
+	}
 	if (gameStarted == false)
 	{
 		return;
@@ -66,6 +69,7 @@ window.addEventListener("keydown", function(e)
 	{
 		pauseclick();
 	}
+	
 
 
 	var dir=direction[direction.length-1];//direction의 마지막부분
