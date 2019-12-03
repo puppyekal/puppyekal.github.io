@@ -139,7 +139,7 @@ var player = function() {
 	return {
 		x: x,
 		y: y,
-		color: "rgb(125,167,217)",//"rgba(0, 10, 200, 0.4)",
+		color: "rgb(67,115,202)",//"rgba(0, 10, 200, 0.4)",
 		trail: trail,
 		getVelocity: getVelocity,
 		init: init,
