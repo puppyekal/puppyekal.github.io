@@ -19,10 +19,10 @@ var points = [{col:parseInt(rowcount/2), row:rowcount-4, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-2, side:SIDE_BOTTOM},
 				{col:parseInt(rowcount/2), row:rowcount-1, side:SIDE_BOTTOM}];
 
-if(localStorage.getItem("HighScore") == "null"){
+if(localStorage.getItem("HighScore") == null){
     localStorage.setItem('HighScore', 0);      
 }
-else if(localStorage.getItem("HighScore") == null){
+else if(localStorage.getItem("HighScore") == "null"){
     localStorage.setItem('HighScore', 0);
 }
 //[{5,4,3},{6,4,3},{7,4,3},{8,4,3}]
